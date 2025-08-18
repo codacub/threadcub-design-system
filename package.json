@@ -1,6 +1,5 @@
 {
-  "name": "@threadcub/design-system",
-  "private": true,
+  "name": "threadcub-design-system",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
@@ -8,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build-lib": "vite build --mode lib",
+    "build-lib": "tsc -b && vite build --mode lib && cp src/styles/tokens.css dist/styles.css",
     "lint": "eslint .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
