@@ -12,139 +12,415 @@ const meta: Meta = {
 
 export default meta
 
-// Color palette story - matching your actual tokens.css structure
-export const Colors = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-6)' }}>
+// Helper component for color swatch rows
+const ColorSwatch = ({ 
+  name, 
+  cssVar, 
+  description, 
+  textColor = 'var(--color-gray-900)' 
+}: {
+  name: string
+  value: string
+  cssVar: string
+  description?: string
+  textColor?: string
+}) => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-4)',
+    padding: 'var(--spacing-3)',
+    borderRadius: 'var(--border-radius-base)',
+    border: '1px solid var(--color-gray-200)',
+    backgroundColor: 'var(--color-white)',
+    transition: 'var(--transition-base)',
+    cursor: 'pointer'
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = 'var(--color-gray-50)'
+    e.currentTarget.style.borderColor = 'var(--color-gray-300)'
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = 'var(--color-white)'
+    e.currentTarget.style.borderColor = 'var(--color-gray-200)'
+  }}
+  onClick={() => navigator.clipboard?.writeText(cssVar)}>
+    {/* Color Swatch */}
+    <div style={{
+      width: '48px',
+      height: '48px',
+      backgroundColor: `var(${cssVar})`,
+      borderRadius: 'var(--border-radius-base)',
+      border: '1px solid var(--color-gray-200)',
+      flexShrink: 0,
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+    }} />
     
-    {/* Primary Colors */}
-    <div>
-      <h3 style={{ marginBottom: 'var(--spacing-4)', fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>Primary Colors</h3>
-      <div style={{ display: 'grid', gap: 'var(--spacing-4)', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-        <div style={{ background: 'var(--color-primary)', color: 'white', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Primary (#7C3AED)
-        </div>
-        <div style={{ background: 'var(--color-primary-hover)', color: 'white', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Primary Hover (#6D28D9)
-        </div>
+    {/* Color Details */}
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{
+        fontSize: 'var(--font-size-sm)',
+        fontWeight: 'var(--font-weight-semibold)',
+        color: textColor,
+        marginBottom: '2px'
+      }}>
+        {name}
       </div>
+      <div style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-gray-600)',
+        fontFamily: 'monospace',
+        marginBottom: description ? '2px' : '0'
+      }}>
+        {cssVar}
+      </div>
+      {description && (
+        <div style={{
+          fontSize: 'var(--font-size-xs)',
+          color: 'var(--color-gray-500)',
+          fontStyle: 'italic'
+        }}>
+          {description}
+        </div>
+      )}
+    </div>
+    
+    {/* Copy indicator */}
+    <div style={{
+      fontSize: 'var(--font-size-xs)',
+      color: 'var(--color-gray-400)',
+      opacity: 0.6
+    }}>
+      Click to copy
+    </div>
+  </div>
+)
+
+// Color section component
+const ColorSection = ({ title, children }: { title: string, children: React.ReactNode }) => (
+  <div style={{ marginBottom: 'var(--spacing-8)' }}>
+    <h3 style={{
+      marginBottom: 'var(--spacing-4)',
+      fontSize: 'var(--font-size-lg)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-gray-900)',
+      borderBottom: '2px solid var(--color-gray-200)',
+      paddingBottom: 'var(--spacing-2)'
+    }}>
+      {title}
+    </h3>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-2)' }}>
+      {children}
+    </div>
+  </div>
+)
+
+// Color palette story - Salesforce Lightning inspired layout
+export const Colors = () => (
+  <div style={{ 
+    display: 'flex', 
+    flexDirection: 'column', 
+    gap: 'var(--spacing-6)',
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: 'var(--spacing-4)'
+  }}>
+    
+    {/* Header */}
+    <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-6)' }}>
+      <h2 style={{
+        fontSize: 'var(--font-size-3xl)',
+        fontWeight: 'var(--font-weight-bold)',
+        color: 'var(--color-gray-900)',
+        marginBottom: 'var(--spacing-2)'
+      }}>
+        Color Palette
+      </h2>
+      <p style={{
+        fontSize: 'var(--font-size-base)',
+        color: 'var(--color-gray-600)',
+        maxWidth: '600px',
+        margin: '0 auto'
+      }}>
+        Click any color to copy its CSS variable to your clipboard. These colors form the foundation of the ThreadCub design system.
+      </p>
     </div>
 
-    {/* Semantic Colors */}
-    <div>
-      <h3 style={{ marginBottom: 'var(--spacing-4)', fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>Semantic Colors</h3>
-      <div style={{ display: 'grid', gap: 'var(--spacing-4)', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
-        <div style={{ background: 'var(--color-success)', color: 'white', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Success
-        </div>
-        <div style={{ background: 'var(--color-error)', color: 'white', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Error
-        </div>
-        <div style={{ background: 'var(--color-warning)', color: 'white', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Warning
-        </div>
-        <div style={{ background: 'var(--color-info)', color: 'white', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Info
-        </div>
-        <div style={{ background: 'var(--color-accent)', color: 'white', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Accent
-        </div>
-        <div style={{ background: 'var(--color-accent-blue)', color: 'white', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Accent Blue
-        </div>
-      </div>
-    </div>
+    {/* Primary Colors */}
+    <ColorSection title="Primary Colors">
+      <ColorSwatch 
+        name="Primary" 
+        value="#7C3AED" 
+        cssVar="--color-primary"
+        description="Main brand color for buttons, links, and key UI elements"
+      />
+      <ColorSwatch 
+        name="Primary Hover" 
+        value="#6D28D9" 
+        cssVar="--color-primary-hover"
+        description="Hover state for primary interactive elements"
+      />
+    </ColorSection>
 
     {/* Gray Scale */}
-    <div>
-      <h3 style={{ marginBottom: 'var(--spacing-4)', fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>Gray Scale</h3>
-      <div style={{ display: 'grid', gap: 'var(--spacing-2)', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))' }}>
-        <div style={{ background: 'var(--color-white)', color: 'black', padding: 'var(--spacing-3)', borderRadius: 'var(--border-radius-base)', border: '1px solid var(--color-gray-200)', textAlign: 'center' }}>
-          White
-        </div>
-        {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map(shade => (
-          <div 
-            key={shade}
-            style={{ 
-              background: `var(--color-gray-${shade})`, 
-              color: shade >= 500 ? 'white' : 'black',
-              padding: 'var(--spacing-3)', 
-              borderRadius: 'var(--border-radius-base)',
-              textAlign: 'center',
-              fontSize: 'var(--font-size-xs)'
-            }}
-          >
-            Gray {shade}
-          </div>
-        ))}
-      </div>
-    </div>
+    <ColorSection title="Gray Scale">
+      <ColorSwatch 
+        name="White" 
+        value="#FFFFFF" 
+        cssVar="--color-white"
+        description="Pure white for backgrounds and contrast"
+      />
+      <ColorSwatch 
+        name="Gray 50" 
+        value="#F9FAFB" 
+        cssVar="--color-gray-50"
+        description="Lightest gray for subtle backgrounds"
+      />
+      <ColorSwatch 
+        name="Gray 100" 
+        value="#F3F4F6" 
+        cssVar="--color-gray-100"
+        description="Very light gray for card backgrounds"
+      />
+      <ColorSwatch 
+        name="Gray 200" 
+        value="#E5E7EB" 
+        cssVar="--color-gray-200"
+        description="Light gray for borders and dividers"
+      />
+      <ColorSwatch 
+        name="Gray 300" 
+        value="#D1D5DB" 
+        cssVar="--color-gray-300"
+        description="Medium-light gray for inactive states"
+      />
+      <ColorSwatch 
+        name="Gray 400" 
+        value="#9CA3AF" 
+        cssVar="--color-gray-400"
+        description="Medium gray for placeholder text"
+      />
+      <ColorSwatch 
+        name="Gray 500" 
+        value="#6B7280" 
+        cssVar="--color-gray-500"
+        description="Medium-dark gray for secondary text"
+      />
+      <ColorSwatch 
+        name="Gray 600" 
+        value="#4B5563" 
+        cssVar="--color-gray-600"
+        description="Dark gray for labels and captions"
+      />
+      <ColorSwatch 
+        name="Gray 700" 
+        value="#374151" 
+        cssVar="--color-gray-700"
+        description="Darker gray for headings"
+      />
+      <ColorSwatch 
+        name="Gray 800" 
+        value="#1F2937" 
+        cssVar="--color-gray-800"
+        description="Very dark gray for primary text"
+      />
+      <ColorSwatch 
+        name="Gray 900" 
+        value="#111827" 
+        cssVar="--color-gray-900"
+        description="Darkest gray for high contrast text"
+      />
+    </ColorSection>
+
+    {/* Semantic Colors */}
+    <ColorSection title="Semantic Colors">
+      <ColorSwatch 
+        name="Success" 
+        value="#10B981" 
+        cssVar="--color-success"
+        description="Success states, confirmations, and positive actions"
+      />
+      <ColorSwatch 
+        name="Error" 
+        value="#EF4444" 
+        cssVar="--color-error"
+        description="Error states, warnings, and destructive actions"
+      />
+      <ColorSwatch 
+        name="Error Light" 
+        value="#FEF2F2" 
+        cssVar="--color-error-light"
+        description="Light error background for hover states"
+      />
+      <ColorSwatch 
+        name="Warning" 
+        value="#F59E0B" 
+        cssVar="--color-warning"
+        description="Warning states and cautionary messages"
+      />
+      <ColorSwatch 
+        name="Info" 
+        value="#3B82F6" 
+        cssVar="--color-info"
+        description="Informational messages and neutral notifications"
+      />
+      <ColorSwatch 
+        name="Accent" 
+        value="#00A3E4" 
+        cssVar="--color-accent"
+        description="Secondary accent color for highlights"
+      />
+      <ColorSwatch 
+        name="Accent Blue" 
+        value="#4A90E2" 
+        cssVar="--color-accent-blue"
+        description="Blue accent for links and interactive elements"
+      />
+    </ColorSection>
+
+    {/* Alert Colors */}
+    <ColorSection title="Alert Component Colors">
+      <ColorSwatch 
+        name="Alert Success Background" 
+        value="#DCFCE7" 
+        cssVar="--color-alert-success-bg"
+        description="Background color for success alerts"
+      />
+      <ColorSwatch 
+        name="Alert Success Text" 
+        value="#166534" 
+        cssVar="--color-alert-success-text"
+        description="Text color for success alerts"
+      />
+      <ColorSwatch 
+        name="Alert Success Border" 
+        value="#BBF7D0" 
+        cssVar="--color-alert-success-border"
+        description="Border color for success alerts"
+      />
+      <ColorSwatch 
+        name="Alert Error Background" 
+        value="#FEF2F2" 
+        cssVar="--color-alert-error-bg"
+        description="Background color for error alerts"
+      />
+      <ColorSwatch 
+        name="Alert Error Text" 
+        value="#DC2626" 
+        cssVar="--color-alert-error-text"
+        description="Text color for error alerts"
+      />
+      <ColorSwatch 
+        name="Alert Error Border" 
+        value="#FECACA" 
+        cssVar="--color-alert-error-border"
+        description="Border color for error alerts"
+      />
+      <ColorSwatch 
+        name="Alert Warning Background" 
+        value="#FFFBEB" 
+        cssVar="--color-alert-warning-bg"
+        description="Background color for warning alerts"
+      />
+      <ColorSwatch 
+        name="Alert Warning Text" 
+        value="#D97706" 
+        cssVar="--color-alert-warning-text"
+        description="Text color for warning alerts"
+      />
+      <ColorSwatch 
+        name="Alert Warning Border" 
+        value="#FED7AA" 
+        cssVar="--color-alert-warning-border"
+        description="Border color for warning alerts"
+      />
+      <ColorSwatch 
+        name="Alert Info Background" 
+        value="#EFF6FF" 
+        cssVar="--color-alert-info-bg"
+        description="Background color for info alerts"
+      />
+      <ColorSwatch 
+        name="Alert Info Text" 
+        value="#2563EB" 
+        cssVar="--color-alert-info-text"
+        description="Text color for info alerts"
+      />
+      <ColorSwatch 
+        name="Alert Info Border" 
+        value="#DBEAFE" 
+        cssVar="--color-alert-info-border"
+        description="Border color for info alerts"
+      />
+    </ColorSection>
 
     {/* Text Colors */}
-    <div>
-      <h3 style={{ marginBottom: 'var(--spacing-4)', fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>Text Colors</h3>
-      <div style={{ display: 'grid', gap: 'var(--spacing-4)', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
-        <div style={{ background: 'var(--color-gray-50)', color: 'var(--color-text-primary)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)' }}>
-          Text Primary
-        </div>
-        <div style={{ background: 'var(--color-gray-50)', color: 'var(--color-text-secondary)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)' }}>
-          Text Secondary
-        </div>
-        <div style={{ background: 'var(--color-gray-50)', color: 'var(--color-text-muted)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)' }}>
-          Text Muted
-        </div>
-        <div style={{ background: 'var(--color-gray-50)', color: 'var(--color-title)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)' }}>
-          Title Color
-        </div>
-      </div>
-    </div>
-
-    {/* Priority Tag Colors */}
-    <div>
-      <h3 style={{ marginBottom: 'var(--spacing-4)', fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>Priority Tag Colors</h3>
-      <div style={{ display: 'grid', gap: 'var(--spacing-4)', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
-        <div style={{ background: 'var(--color-priority-high-bg)', color: 'var(--color-priority-high-text)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)' }}>
-          High Priority
-        </div>
-        <div style={{ background: 'var(--color-priority-medium-bg)', color: 'var(--color-priority-medium-text)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)' }}>
-          Medium Priority
-        </div>
-        <div style={{ background: 'var(--color-priority-low-bg)', color: 'var(--color-priority-low-text)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)' }}>
-          Low Priority
-        </div>
-      </div>
-    </div>
+    <ColorSection title="Text Colors">
+      <ColorSwatch 
+        name="Text Primary" 
+        value="#333333" 
+        cssVar="--color-text-primary"
+        description="Primary text color for headings and body text"
+      />
+      <ColorSwatch 
+        name="Text Secondary" 
+        value="#666666" 
+        cssVar="--color-text-secondary"
+        description="Secondary text color for supporting content"
+      />
+      <ColorSwatch 
+        name="Text Muted" 
+        value="#999999" 
+        cssVar="--color-text-muted"
+        description="Muted text color for less important content"
+      />
+      <ColorSwatch 
+        name="Title Color" 
+        value="#8B4513" 
+        cssVar="--color-title"
+        description="Special color for brand titles and headings"
+      />
+      <ColorSwatch 
+        name="Highlight" 
+        value="#555555" 
+        cssVar="--color-highlight"
+        description="Text color for highlighted content"
+      />
+      <ColorSwatch 
+        name="Toggle Inactive" 
+        value="#CCCCCC" 
+        cssVar="--color-toggle-inactive"
+        description="Color for inactive toggle states"
+      />
+    </ColorSection>
 
     {/* Border Colors */}
-    <div>
-      <h3 style={{ marginBottom: 'var(--spacing-4)', fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>Border Colors</h3>
-      <div style={{ display: 'grid', gap: 'var(--spacing-4)', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
-        <div style={{ background: 'var(--color-white)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '2px solid var(--color-border)' }}>
-          Border Default
-        </div>
-        <div style={{ background: 'var(--color-white)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '2px solid var(--color-border-light)' }}>
-          Border Light
-        </div>
-        <div style={{ background: 'var(--color-white)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '2px solid var(--color-border-form)' }}>
-          Border Form
-        </div>
-      </div>
-    </div>
-
-    {/* Floating Button Colors (Chrome Extension) */}
-    <div>
-      <h3 style={{ marginBottom: 'var(--spacing-4)', fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>Floating Button Colors</h3>
-      <div style={{ display: 'grid', gap: 'var(--spacing-4)', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
-        <div style={{ background: 'var(--color-floating-btn-bg)', color: 'var(--color-floating-btn-text)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-floating-btn-border)' }}>
-          Floating Button
-        </div>
-        <div style={{ background: 'var(--color-action-btn-bg)', color: 'var(--color-action-btn-text)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-action-btn-border)' }}>
-          Action Button
-        </div>
-        <div style={{ background: 'var(--color-tooltip-bg)', color: 'var(--color-tooltip-text)', padding: 'var(--spacing-4)', borderRadius: 'var(--border-radius-lg)' }}>
-          Tooltip
-        </div>
-      </div>
-    </div>
+    <ColorSection title="Border Colors">
+      <ColorSwatch 
+        name="Border Default" 
+        value="#EAEAEA" 
+        cssVar="--color-border"
+        description="Default border color for cards and containers"
+      />
+      <ColorSwatch 
+        name="Border Light" 
+        value="#F0F0F0" 
+        cssVar="--color-border-light"
+        description="Light border color for subtle dividers"
+      />
+      <ColorSwatch 
+        name="Border Form" 
+        value="#E9ECEF" 
+        cssVar="--color-border-form"
+        description="Border color for form inputs and fields"
+      />
+      <ColorSwatch 
+        name="Border Overlay" 
+        value="#4F46E5" 
+        cssVar="--color-border-overlay"
+        description="Colored border for overlays and focus states"
+      />
+    </ColorSection>
 
   </div>
 )
@@ -227,6 +503,12 @@ export const Typography = () => (
         </div>
         <div style={{ fontSize: 'var(--font-size-2xl)', fontFamily: 'var(--font-family-primary)' }}>
           2XL (24px) - Section headings
+        </div>
+        <div style={{ fontSize: 'var(--font-size-3xl)', fontFamily: 'var(--font-family-primary)' }}>
+          3XL (32px) - Large headings
+        </div>
+        <div style={{ fontSize: 'var(--font-size-4xl)', fontFamily: 'var(--font-family-primary)' }}>
+          4XL (40px) - Hero headings
         </div>
       </div>
     </div>

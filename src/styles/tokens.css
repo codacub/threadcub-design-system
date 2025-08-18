@@ -98,6 +98,26 @@
   --color-toast-error-bg: #FAE1E1; /* From floating-button.js */
   --color-toast-error-text: #E32920; /* From floating-button.js */
 
+  /* Alert Component Colors */
+  /* Success Alert Colors */
+  --color-alert-success-bg: #DCFCE7;
+  --color-alert-success-text: #166534;
+  --color-alert-success-border: #BBF7D0;
+  
+  /* Error Alert Colors */
+  --color-alert-error-bg: #FEF2F2;
+  --color-alert-error-text: #DC2626;
+  --color-alert-error-border: #FECACA;
+  
+  /* Warning Alert Colors */
+  --color-alert-warning-bg: #FFFBEB;
+  --color-alert-warning-text: #D97706;
+  --color-alert-warning-border: #FED7AA;
+  
+  /* Info Alert Colors */
+  --color-alert-info-bg: #EFF6FF;
+  --color-alert-info-text: #2563EB;
+  --color-alert-info-border: #DBEAFE;
 
   /* ===== SPACING ===== */
   --spacing-0: 0px;
@@ -193,4 +213,11 @@
   --action-button-size: 32px; /* From floating-button.js */
   --shadow-button-size: 48px; /* From floating-button.js */
   --toast-height: 40px; /* From floating-button.js */
+
+/* Input placeholder text */
+input::placeholder {
+  color: var(--color-gray-400); /* or another token */
+  opacity: 1; /* prevents browsers from dimming the placeholder */
+}
+
 }
