@@ -7,7 +7,7 @@ export interface ButtonProps {
   size?: 'sm' | 'md' | 'lg'
   disabled?: boolean
   children: React.ReactNode
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void  // ← FIXED THIS LINE
   type?: 'button' | 'submit' | 'reset'
   style?: React.CSSProperties
   className?: string
@@ -119,16 +119,16 @@ export const Button: React.FC<ButtonProps> = ({
     ...style // Add custom style prop
   }
 
-  // Debug logging for button state
-  console.log('Button Debug:', {
-    disabled,
-    variant,
-    combinedStyles: {
-      backgroundColor: combinedStyles.backgroundColor,
-      color: combinedStyles.color,
-      border: combinedStyles.border
-    }
-  })
+  // REMOVE THIS DEBUG LOG - it's spamming your console
+  // console.log('Button Debug:', {
+  //   disabled,
+  //   variant,
+  //   combinedStyles: {
+  //     backgroundColor: combinedStyles.backgroundColor,
+  //     color: combinedStyles.color,
+  //     border: combinedStyles.border
+  //   }
+  // })
 
   const handleMouseOver = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
