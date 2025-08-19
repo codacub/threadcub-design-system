@@ -127,17 +127,7 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
         </p>
       </div>
 
-      {/* Global card message (Alert) */}
-      {message && (
-        <Alert
-          type={message.type}
-          size="md"
-          dismissible={message.dismissible !== true && !!onDismissMessage}
-          onClose={message.dismissible ? onDismissMessage : undefined}
-        >
-          {message.text}
-        </Alert>
-      )}
+
 
       {/* Form */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-6)' }}>
