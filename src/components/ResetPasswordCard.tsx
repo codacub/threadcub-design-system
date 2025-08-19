@@ -11,18 +11,12 @@ export interface ResetPasswordCardProps {
   onSubmit?: (email: string) => Promise<void>
   onBackToSignIn?: () => void
   loading?: boolean
-  /**
-   * Message to display above the form.
-   * `dismissible` controls whether a close button appears (requires onDismissMessage to work).
-   */
   message?: {
     type: 'success' | 'error' | 'info' | 'warning'
     text: string
     dismissible?: boolean
   } | null
-  /** Callback when message is dismissed (only used if message.dismissible is true). */
   onDismissMessage?: () => void
-
   maxWidth?: string
   padding?: 'sm' | 'md' | 'lg'
   shadow?: 'sm' | 'md' | 'lg'
@@ -87,11 +81,8 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    // Mark field as touched on submit
     setTouched(true)
 
-    // Validate before submitting
     if (!isFormValid) {
       return
     }
@@ -120,14 +111,23 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
           fontSize: 'var(--font-size-base)',
           fontFamily: 'var(--font-family-primary)',
           color: 'var(--color-gray-600)',
-          margin: '0 0 var(--spacing-8) 0',
-          lineHeight: 'var(--line-height-normal)'
+          margin: '0 0 var(--spacing-8) 0'
         }}>
           Enter your email to receive password reset instructions
         </p>
       </div>
 
-
+      {/* Global card message (Alert) */}
+      {message && (
+        <Alert
+          type={message.type}
+          size="md"
+          dismissible={message.dismissible === true}
+          onClose={message.dismissible ? onDismissMessage : undefined}
+        >
+          {message.text}
+        </Alert>
+      )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-6)' }}>
