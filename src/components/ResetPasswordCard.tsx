@@ -92,6 +92,13 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     }
   }
 
+  // Handle back to sign in
+  const handleBackToSignIn = () => {
+    if (onBackToSignIn) {
+      onBackToSignIn()
+    }
+  }
+
   // Render
   return (
     <div style={cardStyles}>
@@ -171,7 +178,7 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
         <div style={{ textAlign: 'center' }}>
           <button
             type="button"
-            onClick={onBackToSignIn}
+            onClick={handleBackToSignIn}
             style={{
               background: 'none',
               border: 'none',
