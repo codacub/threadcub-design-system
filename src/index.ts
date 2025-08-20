@@ -9,6 +9,7 @@ export { Logo } from './components/Logo'
 export { Divider } from './components/Divider'
 export { SocialButton } from './components/SocialButton'
 export { Heading } from './components/Heading'
+export { ResetPasswordCard } from './components/ResetPasswordCard'
 
 // Export all types
 export type { ButtonProps } from './components/Button'
@@ -17,3 +18,4 @@ export type { LogoProps } from './components/Logo'
 export type { DividerProps } from './components/Divider'
 export type { SocialButtonProps } from './components/SocialButton'
 export type { HeadingProps } from './components/Heading'
+export type { ResetPasswordCardProps } from './components/ResetPasswordCard'
