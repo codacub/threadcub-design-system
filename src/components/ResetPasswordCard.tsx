@@ -4,7 +4,6 @@ import { Logo } from './Logo'
 import { Heading } from './Heading'
 import { Input } from './Input'
 import { Button } from './Button'
-import { Alert } from './Alert'
 
 // ResetPasswordCard component interface
 export interface ResetPasswordCardProps {
@@ -27,8 +26,8 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
   onSubmit,
   onBackToSignIn,
   loading = false,
-  message = null,
-  onDismissMessage,
+// message = null,
+// onDismissMessage,
   maxWidth = '480px',
   padding = 'lg',
   shadow = 'md'
@@ -117,17 +116,18 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
         </p>
       </div>
 
-      {/* Global card message (Alert) */}
-      {message && (
-        <Alert
-          type={message.type}
-          size="md"
-          dismissible={message.dismissible === true}
-          onClose={message.dismissible ? onDismissMessage : undefined}
-        >
-          {message.text}
-        </Alert>
-      )}
+     {/* Comment out this entire section:
+{message && (
+  <Alert
+    type={message.type}
+    size="md"
+    dismissible={message.dismissible === true}
+    onClose={message.dismissible ? onDismissMessage : undefined}
+  >
+    {message.text}
+  </Alert>
+)}
+*/}
 
       {/* Form */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-6)' }}>
