@@ -36,6 +36,14 @@ const meta: Meta<typeof AuthCard> = {
       control: { type: 'object' },
       description: 'Message to display'
     },
+    showRememberMe: {
+      control: { type: 'boolean' },
+      description: 'Show remember me checkbox for sign in'
+    },
+    rememberMe: {
+      control: { type: 'boolean' },
+      description: 'Remember me checkbox state'
+    },
     maxWidth: { 
       control: 'text',
       description: 'Maximum width of the card'
@@ -62,6 +70,7 @@ const meta: Meta<typeof AuthCard> = {
     onGithubAuth: fn(),
     onForgotPassword: fn(),
     onDismissMessage: fn(),
+    onRememberMeChange: fn(),
   },
 }
 
@@ -82,6 +91,30 @@ export const SignIn: Story = {
     mode: 'signin',
     loading: false,
     message: null,
+    showRememberMe: false,
+    rememberMe: false,
+    ...defaultHandlers,
+  },
+}
+
+export const SignInWithRememberMe: Story = {
+  args: {
+    mode: 'signin',
+    loading: false,
+    message: null,
+    showRememberMe: true,
+    rememberMe: false,
+    ...defaultHandlers,
+  },
+}
+
+export const SignInRememberMeChecked: Story = {
+  args: {
+    mode: 'signin',
+    loading: false,
+    message: null,
+    showRememberMe: true,
+    rememberMe: true,
     ...defaultHandlers,
   },
 }
@@ -91,6 +124,8 @@ export const SignInLoading: Story = {
     mode: 'signin',
     loading: true,
     message: null,
+    showRememberMe: true,
+    rememberMe: false,
     ...defaultHandlers,
   },
 }
@@ -104,6 +139,8 @@ export const SignInWithError: Story = {
       text: 'Invalid email or password',
       dismissible: true 
     },
+    showRememberMe: true,
+    rememberMe: false,
     ...defaultHandlers,
   },
 }
@@ -117,6 +154,8 @@ export const SignInWithSuccess: Story = {
       text: 'Sign in successful! Redirecting...',
       dismissible: false 
     },
+    showRememberMe: true,
+    rememberMe: true,
     ...defaultHandlers,
   },
 }
@@ -127,6 +166,8 @@ export const SignUp: Story = {
     mode: 'signup',
     loading: false,
     message: null,
+    showRememberMe: false, // Remember me not shown for signup
+    rememberMe: false,
     ...defaultHandlers,
   },
 }
@@ -136,6 +177,8 @@ export const SignUpLoading: Story = {
     mode: 'signup',
     loading: true,
     message: null,
+    showRememberMe: false,
+    rememberMe: false,
     ...defaultHandlers,
   },
 }
@@ -149,6 +192,8 @@ export const SignUpWithInfo: Story = {
       text: 'Check your email to confirm your account!',
       dismissible: true
     },
+    showRememberMe: false,
+    rememberMe: false,
     ...defaultHandlers,
   },
 }
@@ -162,6 +207,8 @@ export const SignUpWithError: Story = {
       text: 'An account with this email already exists',
       dismissible: true 
     },
+    showRememberMe: false,
+    rememberMe: false,
     ...defaultHandlers,
   },
 }
@@ -175,6 +222,8 @@ export const SignUpWithWarning: Story = {
       text: 'Please use a strong password for security',
       dismissible: true 
     },
+    showRememberMe: false,
+    rememberMe: false,
     ...defaultHandlers,
   },
 }
@@ -185,6 +234,8 @@ export const SmallCard: Story = {
     mode: 'signin',
     loading: false,
     message: null,
+    showRememberMe: true,
+    rememberMe: false,
     maxWidth: '360px',
     minWidth: '320px',
     padding: 'sm',
@@ -198,6 +249,8 @@ export const LargeCard: Story = {
     mode: 'signin',
     loading: false,
     message: null,
+    showRememberMe: true,
+    rememberMe: false,
     maxWidth: '520px',
     minWidth: '480px',
     padding: 'lg',
@@ -211,6 +264,8 @@ export const WideCard: Story = {
     mode: 'signin',
     loading: false,
     message: null,
+    showRememberMe: true,
+    rememberMe: false,
     maxWidth: '600px',
     minWidth: '500px',
     padding: 'lg',
@@ -225,6 +280,7 @@ export const Interactive: Story = {
     const [mode, setMode] = React.useState<'signin' | 'signup'>('signin')
     const [loading, setLoading] = React.useState(false)
     const [message, setMessage] = React.useState<{ type: 'success' | 'error' | 'info' | 'warning'; text: string; dismissible?: boolean } | null>(null)
+    const [rememberMe, setRememberMe] = React.useState(false)
 
     const handleSubmit = async (data: any) => {
       setLoading(true)
@@ -237,7 +293,7 @@ export const Interactive: Story = {
         if (data.mode === 'signin') {
           setMessage({ 
             type: 'success', 
-            text: 'Sign in successful! Redirecting...',
+            text: `Sign in successful! ${rememberMe ? 'You will be remembered for 30 days.' : ''} Redirecting...`,
             dismissible: false 
           })
         } else {
@@ -261,25 +317,53 @@ export const Interactive: Story = {
     const handleToggleMode = () => {
       setMode(mode === 'signin' ? 'signup' : 'signin')
       setMessage(null)
+      setRememberMe(false) // Reset remember me when switching modes
     }
 
     const handleDismissMessage = () => {
       setMessage(null)
     }
 
+    const handleRememberMeChange = (checked: boolean) => {
+      setRememberMe(checked)
+    }
+
     return (
-      <AuthCard
-        {...args}
-        mode={mode}
-        loading={loading}
-        message={message}
-        onSubmit={handleSubmit}
-        onToggleMode={handleToggleMode}
-        onGoogleAuth={() => console.log('Google auth')}
-        onGithubAuth={() => console.log('GitHub auth')}
-        onForgotPassword={() => console.log('Forgot password')}
-        onDismissMessage={handleDismissMessage}
-      />
+      <div style={{ fontFamily: 'var(--font-family-primary)' }}>
+        <AuthCard
+          {...args}
+          mode={mode}
+          loading={loading}
+          message={message}
+          showRememberMe={mode === 'signin'} // Only show for sign in
+          rememberMe={rememberMe}
+          onSubmit={handleSubmit}
+          onToggleMode={handleToggleMode}
+          onGoogleAuth={() => console.log('Google auth')}
+          onGithubAuth={() => console.log('GitHub auth')}
+          onForgotPassword={() => console.log('Forgot password')}
+          onDismissMessage={handleDismissMessage}
+          onRememberMeChange={handleRememberMeChange}
+        />
+        
+        {/* Debug info */}
+        <div style={{ 
+          marginTop: 'var(--spacing-4)',
+          padding: 'var(--spacing-4)',
+          backgroundColor: 'var(--color-gray-50)',
+          borderRadius: 'var(--border-radius-base)',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-gray-600)'
+        }}>
+          <strong>Debug Info:</strong>
+          <ul style={{ margin: 'var(--spacing-2) 0 0 0', paddingLeft: 'var(--spacing-4)' }}>
+            <li>Mode: {mode}</li>
+            <li>Loading: {loading ? 'Yes' : 'No'}</li>
+            <li>Remember Me: {rememberMe ? 'Checked' : 'Unchecked'}</li>
+            <li>Show Remember Me: {mode === 'signin' ? 'Yes' : 'No'}</li>
+          </ul>
+        </div>
+      </div>
     )
   },
   args: {

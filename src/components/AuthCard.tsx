@@ -6,7 +6,8 @@ import { Input } from './Input'
 import { Button } from './Button'
 import { Divider } from './Divider'
 import { SocialButton } from './SocialButton'
-import { Alert } from './Alert' 
+import { Alert } from './Alert'
+import { Checkbox } from './Checkbox'
 
 // AuthCard component interface
 export interface AuthCardProps {
@@ -28,6 +29,12 @@ export interface AuthCardProps {
   } | null
   /** Callback when message is dismissed (only used if message.dismissible is true). */
   onDismissMessage?: () => void
+  /** Show remember me checkbox for sign in */
+  showRememberMe?: boolean
+  /** Remember me checkbox state */
+  rememberMe?: boolean
+  /** Callback when remember me state changes */
+  onRememberMeChange?: (checked: boolean) => void
 
   maxWidth?: string
   minWidth?: string
@@ -46,6 +53,9 @@ export const AuthCard: React.FC<AuthCardProps> = ({
   loading = false,
   message = null,
   onDismissMessage,
+  showRememberMe = false,
+  rememberMe = false,
+  onRememberMeChange,
   maxWidth = '480px',
   minWidth = '480px',
   padding = 'lg',
@@ -92,14 +102,14 @@ export const AuthCard: React.FC<AuthCardProps> = ({
   // Check if form is valid for button state
   const isFormValid = emailValidation.isValid && passwordValidation.isValid
 
-  // Padding variants
+  // Padding variants using design tokens
   const paddingVariants = {
     sm: 'var(--spacing-6)',
     md: 'var(--spacing-8)',
     lg: 'var(--spacing-10)'
   }
 
-  // Shadow variants
+  // Shadow variants using design tokens
   const shadowVariants = {
     sm: 'var(--shadow-card)',
     md: '0 4px 16px rgba(0, 0, 0, 0.1)',
@@ -207,8 +217,8 @@ export const AuthCard: React.FC<AuthCardProps> = ({
         <Alert
           type={message.type}
           size="md"
-          dismissible={message.dismissible !== true && !!onDismissMessage}
-          onClose={message.dismissible ? onDismissMessage : undefined}
+          dismissible={message.dismissible !== false && !!onDismissMessage}
+          onClose={message.dismissible !== false ? onDismissMessage : undefined}
         >
           {message.text}
         </Alert>
@@ -245,8 +255,49 @@ export const AuthCard: React.FC<AuthCardProps> = ({
             onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
           />
 
-          {/* Forgot password link for login */}
-          {mode === 'signin' && onForgotPassword && (
+          {/* Checkbox and Forgot Password on same line for sign in */}
+          {mode === 'signin' && showRememberMe && (
+            <div style={{ 
+              marginTop: 'var(--spacing-2)', 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center' 
+            }}>
+              {/* Left side - Save account checkbox */}
+              <Checkbox
+                label="Save account"
+                checked={rememberMe}
+                onChange={onRememberMeChange}
+                size="md"
+              />
+              
+              {/* Right side - Forgot password link */}
+              {onForgotPassword && (
+                <button
+                  type="button"
+                  onClick={onForgotPassword}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: 'var(--font-size-base)',
+                    color: 'var(--color-primary)',
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-family-primary)',
+                    fontWeight: 'var(--font-weight-normal)',
+                    textDecoration: 'none',
+                    transition: 'text-decoration var(--transition-base)'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                  onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                >
+                  Forgot password?
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Forgot password only (for when showRememberMe is false) */}
+          {mode === 'signin' && !showRememberMe && onForgotPassword && (
             <div style={{ marginTop: 'var(--spacing-2)', textAlign: 'right' }}>
               <button
                 type="button"
@@ -254,13 +305,13 @@ export const AuthCard: React.FC<AuthCardProps> = ({
                 style={{
                   background: 'none',
                   border: 'none',
-                  fontSize: 'var(--font-size-sm)',
+                  fontSize: 'var(--font-size-base)',
                   color: 'var(--color-primary)',
                   cursor: 'pointer',
                   fontFamily: 'var(--font-family-primary)',
                   fontWeight: 'var(--font-weight-normal)',
                   textDecoration: 'none',
-                  transition: 'text-decoration 0.2s ease'
+                  transition: 'text-decoration var(--transition-base)'
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                 onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
@@ -327,7 +378,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
                   fontWeight: 'var(--font-weight-medium)',
                   textDecoration: 'none',
                   padding: 0,
-                  transition: 'text-decoration 0.2s ease'
+                  transition: 'text-decoration var(--transition-base)'
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                 onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
@@ -351,7 +402,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
                   fontWeight: 'var(--font-weight-medium)',
                   textDecoration: 'none',
                   padding: 0,
-                  transition: 'text-decoration 0.2s ease'
+                  transition: 'text-decoration var(--transition-base)'
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                 onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
@@ -368,7 +419,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
           color: 'var(--color-gray-500)',
           textAlign: 'center',
           fontFamily: 'var(--font-family-primary)',
-          lineHeight: '1.4'
+          lineHeight: 'var(--line-height-normal)'
         }}>
           By continuing, you agree to ThreadCub's{' '}
           <br />
@@ -378,7 +429,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
               color: 'var(--color-gray-900)',
               textDecoration: 'none',
               fontWeight: 'var(--font-weight-medium)',
-              transition: 'text-decoration 0.2s ease'
+              transition: 'text-decoration var(--transition-base)'
             }}
             onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
             onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
@@ -392,7 +443,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
               color: 'var(--color-gray-900)',
               textDecoration: 'none',
               fontWeight: 'var(--font-weight-medium)',
-              transition: 'text-decoration 0.2s ease'
+              transition: 'text-decoration var(--transition-base)'
             }}
             onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
             onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
