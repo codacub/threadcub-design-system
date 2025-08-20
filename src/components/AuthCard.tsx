@@ -30,6 +30,7 @@ export interface AuthCardProps {
   onDismissMessage?: () => void
 
   maxWidth?: string
+  minWidth?: string
   padding?: 'sm' | 'md' | 'lg'
   shadow?: 'sm' | 'md' | 'lg'
 }
@@ -46,6 +47,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
   message = null,
   onDismissMessage,
   maxWidth = '480px',
+  minWidth = '480px',
   padding = 'lg',
   shadow = 'md'
 }) => {
@@ -111,6 +113,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
     padding: paddingVariants[padding],
     width: '100%',
     maxWidth: maxWidth,
+    minWidth: minWidth,
     margin: '0 auto',
     display: 'flex',
     flexDirection: 'column',
@@ -251,11 +254,11 @@ export const AuthCard: React.FC<AuthCardProps> = ({
                 style={{
                   background: 'none',
                   border: 'none',
-                  fontSize: 'var(--font-size-base)',
+                  fontSize: 'var(--font-size-sm)',
                   color: 'var(--color-primary)',
                   cursor: 'pointer',
                   fontFamily: 'var(--font-family-primary)',
-                  fontWeight: 'var(--font-weight-medium)',
+                  fontWeight: 'var(--font-weight-normal)',
                   textDecoration: 'none',
                   transition: 'text-decoration 0.2s ease'
                 }}

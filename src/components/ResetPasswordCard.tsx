@@ -5,6 +5,7 @@ import { Heading } from './Heading'
 import { Input } from './Input'
 import { Button } from './Button'
 import { Alert } from './Alert'
+import { Divider } from './Divider'
 
 // ResetPasswordCard component interface
 export interface ResetPasswordCardProps {
@@ -18,6 +19,7 @@ export interface ResetPasswordCardProps {
   } | null
   onDismissMessage?: () => void
   maxWidth?: string
+  minWidth?: string
   padding?: 'sm' | 'md' | 'lg'
   shadow?: 'sm' | 'md' | 'lg'
 }
@@ -30,6 +32,7 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
   message = null,
   onDismissMessage,
   maxWidth = '480px',
+  minWidth = '480px',
   padding = 'lg',
   shadow = 'md'
 }) => {
@@ -71,6 +74,7 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     padding: paddingVariants[padding],
     width: '100%',
     maxWidth: maxWidth,
+    minWidth: minWidth,
     margin: '0 auto',
     display: 'flex',
     flexDirection: 'column',
@@ -129,8 +133,8 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
         <Alert
           type={message.type}
           size="md"
-          dismissible={message.dismissible !== false && !!onDismissMessage}
-          onClose={message.dismissible !== false ? onDismissMessage : undefined}
+          dismissible={message.dismissible !== true && !!onDismissMessage}
+          onClose={message.dismissible !== true ? onDismissMessage : undefined}
         >
           {message.text}
         </Alert>
@@ -160,7 +164,7 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
           disabled={!isFormValid || loading}
           style={{ width: '100%' }}
         >
-          {loading ? 'Sending...' : 'Send Reset Email'}
+          {loading ? 'Sending...' : 'Send reset email'}
         </Button>
       </form>
 
@@ -172,7 +176,7 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
           color: 'var(--color-gray-500)',
           fontFamily: 'var(--font-family-primary)'
         }}>
-          or
+          <Divider text="OR" />
         </div>
         
         <div style={{ textAlign: 'center' }}>
@@ -194,7 +198,7 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
             onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
             onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
           >
-            ← Back to Sign In
+            Back to Sign In
         </button>
         </div>
       </div>

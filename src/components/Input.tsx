@@ -116,7 +116,8 @@ export const Input: React.FC<InputProps> = ({
   const hintStyles: React.CSSProperties = {
     fontSize: 'var(--font-size-sm)',
     color: error ? 'var(--color-error)' : 'var(--color-gray-500)',
-    margin: '0'
+    margin: '0',
+    marginTop: 'var(--spacing-1)',
   }
 
   // Simple email icon

@@ -1,5 +1,6 @@
 // stories/AuthCard.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import React from 'react'
 import { AuthCard } from '../components/AuthCard'
 
@@ -39,6 +40,10 @@ const meta: Meta<typeof AuthCard> = {
       control: 'text',
       description: 'Maximum width of the card'
     },
+    minWidth: { 
+      control: 'text',
+      description: 'Minimum width of the card'
+    },
     padding: {
       control: { type: 'select' },
       options: ['sm', 'md', 'lg'],
@@ -49,6 +54,14 @@ const meta: Meta<typeof AuthCard> = {
       options: ['sm', 'md', 'lg'],
       description: 'Card shadow size'
     },
+  },
+  args: {
+    onSubmit: fn() as (data: { email: string; password: string; mode: 'signin' | 'signup' }) => Promise<void>,
+    onToggleMode: fn(),
+    onGoogleAuth: fn(),
+    onGithubAuth: fn(),
+    onForgotPassword: fn(),
+    onDismissMessage: fn(),
   },
 }
 
@@ -67,6 +80,7 @@ const defaultHandlers = {
   onGoogleAuth: () => console.log('Google auth clicked'),
   onGithubAuth: () => console.log('GitHub auth clicked'),
   onForgotPassword: () => console.log('Forgot password clicked'),
+  onDismissMessage: () => console.log('Message dismissed'),
 }
 
 // Sign In Stories
@@ -92,7 +106,11 @@ export const SignInWithError: Story = {
   args: {
     mode: 'signin',
     loading: false,
-    message: { type: 'error', text: 'Invalid email or password' },
+    message: { 
+      type: 'error', 
+      text: 'Invalid email or password',
+      dismissible: true 
+    },
     ...defaultHandlers,
   },
 }
@@ -101,7 +119,11 @@ export const SignInWithSuccess: Story = {
   args: {
     mode: 'signin',
     loading: false,
-    message: { type: 'success', text: 'Sign in successful! Redirecting...' },
+    message: { 
+      type: 'success', 
+      text: 'Sign in successful! Redirecting...',
+      dismissible: false 
+    },
     ...defaultHandlers,
   },
 }
@@ -131,7 +153,8 @@ export const SignUpWithInfo: Story = {
     loading: false,
     message: { 
       type: 'info', 
-      text: 'Check your email to confirm your account!' 
+      text: 'Check your email to confirm your account!',
+      dismissible: true
     },
     ...defaultHandlers,
   },
@@ -141,7 +164,24 @@ export const SignUpWithError: Story = {
   args: {
     mode: 'signup',
     loading: false,
-    message: { type: 'error', text: 'An account with this email already exists' },
+    message: { 
+      type: 'error', 
+      text: 'An account with this email already exists',
+      dismissible: true 
+    },
+    ...defaultHandlers,
+  },
+}
+
+export const SignUpWithWarning: Story = {
+  args: {
+    mode: 'signup',
+    loading: false,
+    message: { 
+      type: 'warning', 
+      text: 'Please use a strong password for security',
+      dismissible: true 
+    },
     ...defaultHandlers,
   },
 }
@@ -152,7 +192,8 @@ export const SmallCard: Story = {
     mode: 'signin',
     loading: false,
     message: null,
-    maxWidth: '320px',
+    maxWidth: '360px',
+    minWidth: '320px',
     padding: 'sm',
     shadow: 'sm',
     ...defaultHandlers,
@@ -164,9 +205,23 @@ export const LargeCard: Story = {
     mode: 'signin',
     loading: false,
     message: null,
-    maxWidth: '500px',
+    maxWidth: '520px',
+    minWidth: '480px',
     padding: 'lg',
     shadow: 'lg',
+    ...defaultHandlers,
+  },
+}
+
+export const WideCard: Story = {
+  args: {
+    mode: 'signin',
+    loading: false,
+    message: null,
+    maxWidth: '600px',
+    minWidth: '500px',
+    padding: 'lg',
+    shadow: 'md',
     ...defaultHandlers,
   },
 }
@@ -176,7 +231,7 @@ export const Interactive: Story = {
   render: (args) => {
     const [mode, setMode] = React.useState<'signin' | 'signup'>('signin')
     const [loading, setLoading] = React.useState(false)
-    const [message, setMessage] = React.useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null)
+    const [message, setMessage] = React.useState<{ type: 'success' | 'error' | 'info' | 'warning'; text: string; dismissible?: boolean } | null>(null)
 
     const handleSubmit = async (data: any) => {
       setLoading(true)
@@ -188,15 +243,24 @@ export const Interactive: Story = {
         await new Promise(resolve => setTimeout(resolve, 2000))
         
         if (data.mode === 'signin') {
-          setMessage({ type: 'success', text: 'Sign in successful! Redirecting...' })
+          setMessage({ 
+            type: 'success', 
+            text: 'Sign in successful! Redirecting...',
+            dismissible: false 
+          })
         } else {
           setMessage({ 
             type: 'info', 
-            text: 'Check your email to confirm your account!' 
+            text: 'Check your email to confirm your account!',
+            dismissible: true
           })
         }
       } catch (error) {
-        setMessage({ type: 'error', text: 'Something went wrong. Please try again' })
+        setMessage({ 
+          type: 'error', 
+          text: 'Something went wrong. Please try again',
+          dismissible: true 
+        })
       } finally {
         setLoading(false)
       }
@@ -204,6 +268,10 @@ export const Interactive: Story = {
 
     const handleToggleMode = () => {
       setMode(mode === 'signin' ? 'signup' : 'signin')
+      setMessage(null)
+    }
+
+    const handleDismissMessage = () => {
       setMessage(null)
     }
 
@@ -218,10 +286,12 @@ export const Interactive: Story = {
         onGoogleAuth={() => console.log('Google auth')}
         onGithubAuth={() => console.log('GitHub auth')}
         onForgotPassword={() => console.log('Forgot password')}
+        onDismissMessage={handleDismissMessage}
       />
     )
   },
   args: {
-    // Initial props (will be overridden by the render function)
+    maxWidth: '480px',
+    minWidth: '400px',
   },
 }
