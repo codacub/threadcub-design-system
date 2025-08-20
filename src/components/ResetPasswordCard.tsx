@@ -124,7 +124,7 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
           color: 'var(--color-gray-600)',
           margin: '0 0 var(--spacing-8) 0'
         }}>
-          Enter your email to receive password reset instructions
+          We'll send an email with instructions.
         </p>
       </div>
 

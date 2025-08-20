@@ -165,8 +165,8 @@ export const AuthCard: React.FC<AuthCardProps> = ({
       }
     } else {
       return {
-        title: 'ThreadCub',
-        subtitle: 'Welcome back',
+        title: 'Welcome back',
+        subtitle: 'Sign in',
         buttonText: loading ? 'Signing in...' : 'Sign In',
         toggleText: "Don't have an account? Sign up",
         socialGoogleText: 'Sign in with Google',
