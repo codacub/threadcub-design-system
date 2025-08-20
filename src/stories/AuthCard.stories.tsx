@@ -70,17 +70,10 @@ type Story = StoryObj<typeof meta>
 
 // Default handlers for all stories
 const defaultHandlers = {
-  onSubmit: async (data: any) => {
-    console.log('Form submitted:', data)
+  onSubmit: async () => {
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1500))
-    alert(`${data.mode === 'signin' ? 'Sign in' : 'Sign up'} successful!`)
   },
-  onToggleMode: () => console.log('Toggle mode clicked'),
-  onGoogleAuth: () => console.log('Google auth clicked'),
-  onGithubAuth: () => console.log('GitHub auth clicked'),
-  onForgotPassword: () => console.log('Forgot password clicked'),
-  onDismissMessage: () => console.log('Message dismissed'),
 }
 
 // Sign In Stories
@@ -238,7 +231,6 @@ export const Interactive: Story = {
       setMessage(null)
       
       try {
-        console.log('Form submitted:', data)
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 2000))
         
