@@ -374,7 +374,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
           <br />
           <a
             href="/terms"
-            target="_blank"
+            // target="_blank"
             rel="noopener noreferrer"
             style={{
               color: 'var(--color-gray-900)',
@@ -390,7 +390,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
           {' '}and{' '}
           <a
             href="/privacy"
-            target="_blank"
+            // target="_blank"
             rel="noopener noreferrer"
             style={{
               color: 'var(--color-gray-900)',
