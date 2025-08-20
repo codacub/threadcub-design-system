@@ -97,7 +97,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     width: sizeConfig.checkbox,
     height: sizeConfig.checkbox,
     borderRadius: 'var(--border-radius-base)',
-    border: `var(--border-width-medium) solid ${checked ? 'var(--color-primary)' : 'var(--color-gray-300)'}`,
+    border: `var(--border-width-thin) solid ${checked ? 'var(--color-primary)' : 'var(--color-gray-400)'}`,
     backgroundColor: checked ? 'var(--color-primary)' : 'var(--color-white)',
     display: 'flex',
     alignItems: 'center',

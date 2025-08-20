@@ -265,7 +265,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
             }}>
               {/* Left side - Save account checkbox */}
               <Checkbox
-                label="Save account"
+                label="Keep me signed in"
                 checked={rememberMe}
                 onChange={onRememberMeChange}
                 size="md"
