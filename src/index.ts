@@ -10,6 +10,7 @@ export { Divider } from './components/Divider'
 export { SocialButton } from './components/SocialButton'
 export { Heading } from './components/Heading'
 export { ResetPasswordCard } from './components/ResetPasswordCard'
+export { Checkbox } from './components/Checkbox'
 
 // Export all types
 export type { ButtonProps } from './components/Button'
@@ -19,3 +20,4 @@ export type { DividerProps } from './components/Divider'
 export type { SocialButtonProps } from './components/SocialButton'
 export type { HeadingProps } from './components/Heading'
 export type { ResetPasswordCardProps } from './components/ResetPasswordCard'
+export type { CheckboxProps } from './components/Checkbox'

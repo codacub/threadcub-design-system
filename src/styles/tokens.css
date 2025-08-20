@@ -13,6 +13,8 @@
   /* Primary */
   --color-primary: #7C3AED;
   --color-primary-hover: #6D28D9;
+  --color-primary-light: #A855F7; /* For focus rings - lighter version of primary */
+  --color-primary-dark: #5B21B6; /* For hover states - darker version of primary */
 
   /* Neutrals */
   --color-white: #FFFFFF;
@@ -172,6 +174,8 @@
   --border-width-action-btn: 1px; /* For action buttons */
   --border-width-overlay: 4px; /* For border overlay */
   --border-width-medium: 2px;
+  --border-width-checkbox: 2px; /* Checkboxes often need thicker borders for visibility */
+
 
   /* ===== SHADOWS ===== */
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
