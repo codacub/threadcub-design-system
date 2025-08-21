@@ -1,19 +1,19 @@
 // src/components/Button.tsx
 import React from 'react'
 
-// Button component interface
 export interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary'
   size?: 'sm' | 'md' | 'lg'
   disabled?: boolean
   children: React.ReactNode
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void  // ← FIXED THIS LINE
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   type?: 'button' | 'submit' | 'reset'
   style?: React.CSSProperties
   className?: string
+  /** Loading state */
+  loading?: boolean
 }
 
-// Button component
 export const Button: React.FC<ButtonProps> = ({ 
   variant = 'primary', 
   size = 'md', 
@@ -22,50 +22,36 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   type = 'button',
   style,
-  className
+  className,
+  loading = false
 }) => {
-  // Base styles
-  const baseStyles: React.CSSProperties = {
-    fontFamily: 'var(--font-family-primary)',
-    fontSize: 'var(--font-size-base)',
-    fontWeight: 'var(--font-weight-medium)',
-    borderRadius: 'var(--border-radius-lg)',
-    border: 'none',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'var(--transition-base)',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textDecoration: 'none',
-    outline: 'none',
-    boxSizing: 'border-box'
-  }
-
-  // Size styles
-  const sizeStyles: Record<string, React.CSSProperties> = {
+  // Size scales using design tokens
+  const sizeStyles = {
     sm: {
       height: '36px',
-      paddingLeft: 'var(--spacing-4)',
-      paddingRight: 'var(--spacing-4)',
-      fontSize: 'var(--font-size-sm)'
+      paddingInline: 'var(--spacing-4)',
+      fontSize: 'var(--font-size-sm)',
+      spinnerSize: '14px'
     },
     md: {
       height: '40px', 
-      paddingLeft: 'var(--spacing-5)',
-      paddingRight: 'var(--spacing-5)',
-      fontSize: 'var(--font-size-base)'
+      paddingInline: 'var(--spacing-5)',
+      fontSize: 'var(--font-size-base)',
+      spinnerSize: '16px'
     },
     lg: {
       height: '44px',
-      paddingLeft: 'var(--spacing-6)',
-      paddingRight: 'var(--spacing-6)',
-      fontSize: 'var(--font-size-lg)'
+      paddingInline: 'var(--spacing-6)',
+      fontSize: 'var(--font-size-lg)',
+      spinnerSize: '18px'
     }
-  }
+  }[size]
 
-  // Variant styles
+  const isDisabled = disabled || loading
+
+  // Variant styles using design tokens
   const getVariantStyles = (): React.CSSProperties => {
-    if (disabled) {
+    if (isDisabled) {
       switch (variant) {
         case 'primary':
           return {
@@ -77,7 +63,7 @@ export const Button: React.FC<ButtonProps> = ({
           return {
             backgroundColor: 'transparent',
             color: 'var(--color-gray-400)',
-            border: '1px solid var(--color-gray-300)'
+            border: 'var(--border-width-thin) solid var(--color-gray-300)'
           }
         case 'tertiary':
           return {
@@ -85,6 +71,8 @@ export const Button: React.FC<ButtonProps> = ({
             color: 'var(--color-gray-400)',
             border: 'none'
           }
+        default:
+          return {}
       }
     }
 
@@ -99,7 +87,7 @@ export const Button: React.FC<ButtonProps> = ({
         return {
           backgroundColor: 'var(--color-white)',
           color: 'var(--color-gray-700)',
-          border: '1px solid var(--color-gray-300)'
+          border: 'var(--border-width-thin) solid var(--color-gray-300)'
         }
       case 'tertiary':
         return {
@@ -112,26 +100,66 @@ export const Button: React.FC<ButtonProps> = ({
     }
   }
 
-  const combinedStyles = {
-    ...baseStyles,
-    ...sizeStyles[size],
+  // Base styles using design tokens
+  const baseStyles: React.CSSProperties = {
+    fontFamily: 'var(--font-family-primary)',
+    fontWeight: 'var(--font-weight-medium)',
+    borderRadius: 'var(--border-radius-lg)',
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
+    transition: 'var(--transition-base)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textDecoration: 'none',
+    outline: 'none',
+    boxSizing: 'border-box',
+    lineHeight: 'var(--line-height-normal)',
+    whiteSpace: 'nowrap',
+    gap: 'var(--spacing-2)',
+    ...sizeStyles,
     ...getVariantStyles(),
-    ...style // Add custom style prop
+    ...style
   }
 
-  // REMOVE THIS DEBUG LOG - it's spamming your console
-  // console.log('Button Debug:', {
-  //   disabled,
-  //   variant,
-  //   combinedStyles: {
-  //     backgroundColor: combinedStyles.backgroundColor,
-  //     color: combinedStyles.color,
-  //     border: combinedStyles.border
-  //   }
-  // })
+  // Loading spinner using design tokens
+  const LoadingSpinner = () => {
+    const spinnerColor = variant === 'primary' ? 'var(--color-white)' : 'var(--color-primary)'
+    const spinnerBorderColor = variant === 'primary' ? 'rgba(255, 255, 255, 0.3)' : 'var(--color-gray-200)'
+    
+    return (
+      <div
+        style={{
+          width: sizeStyles.spinnerSize,
+          height: sizeStyles.spinnerSize,
+          border: `2px solid ${spinnerBorderColor}`,
+          borderTop: `2px solid ${spinnerColor}`,
+          borderRadius: 'var(--border-radius-full)',
+          animation: 'spin 1s linear infinite',
+          flexShrink: 0
+        }}
+      />
+    )
+  }
 
-  const handleMouseOver = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!disabled) {
+  // Add keyframe animation for spinner
+  React.useEffect(() => {
+    const existingStyle = document.getElementById('button-spinner-styles')
+    if (!existingStyle) {
+      const style = document.createElement('style')
+      style.id = 'button-spinner-styles'
+      style.textContent = `
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `
+      document.head.appendChild(style)
+    }
+  }, [])
+
+  // Hover handlers
+  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!isDisabled) {
       const target = e.currentTarget
       if (variant === 'primary') {
         target.style.backgroundColor = 'var(--color-primary-hover)'
@@ -145,41 +173,37 @@ export const Button: React.FC<ButtonProps> = ({
     }
   }
 
-  const handleMouseOut = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!disabled) {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!isDisabled) {
       const target = e.currentTarget
-      // Reset to original styles based on current state
-      const originalStyles = {
-        ...baseStyles,
-        ...sizeStyles[size],
-        ...getVariantStyles()
-      }
+      const originalStyles = getVariantStyles()
       
       target.style.backgroundColor = originalStyles.backgroundColor || ''
-      target.style.borderColor = originalStyles.borderColor || ''
+      target.style.borderColor = originalStyles.borderColor || (variant === 'secondary' ? 'var(--color-gray-300)' : '')
       target.style.color = originalStyles.color || ''
     }
   }
 
+  // Focus handlers
   const handleFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
-    if (!disabled) {
+    if (!isDisabled) {
       const target = e.currentTarget
-      if (variant === 'primary') {
-        target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.3)'
-      } else if (variant === 'secondary') {
+      // Using primary-light token for focus ring
+      target.style.boxShadow = `0 0 0 3px rgba(168, 85, 247, 0.3)` // Based on --color-primary-light
+      
+      if (variant === 'secondary') {
         target.style.borderColor = 'var(--color-primary)'
-        target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.1)'
       } else if (variant === 'tertiary') {
         target.style.backgroundColor = 'var(--color-gray-100)'
-        target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.1)'
       }
     }
   }
 
   const handleBlur = (e: React.FocusEvent<HTMLButtonElement>) => {
-    if (!disabled) {
+    if (!isDisabled) {
       const target = e.currentTarget
       target.style.boxShadow = 'none'
+      
       if (variant === 'secondary') {
         target.style.borderColor = 'var(--color-gray-300)'
       } else if (variant === 'tertiary') {
@@ -188,19 +212,33 @@ export const Button: React.FC<ButtonProps> = ({
     }
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!isDisabled && onClick) {
+      onClick(e)
+    }
+  }
+
   return (
     <button
       type={type}
-      disabled={disabled}
-      onClick={onClick}
-      style={combinedStyles}
+      disabled={isDisabled}
+      onClick={handleClick}
+      style={baseStyles}
       className={className}
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onFocus={handleFocus}
       onBlur={handleBlur}
+      aria-label={loading ? `Loading ${children}` : undefined}
     >
-      {children}
+      {loading && <LoadingSpinner />}
+      <span style={{
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+      }}>
+        {children}
+      </span>
     </button>
   )
 }

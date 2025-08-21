@@ -7,24 +7,35 @@ import { Button } from './Button'
 import { Alert } from './Alert'
 import { Divider } from './Divider'
 
-// ResetPasswordCard component interface
 export interface ResetPasswordCardProps {
+  /** Submit handler for the email */
   onSubmit?: (email: string) => Promise<void>
+  /** Handler for back to sign in button */
   onBackToSignIn?: () => void
+  /** Loading state */
   loading?: boolean
+  /** Message to display */
   message?: {
     type: 'success' | 'error' | 'info' | 'warning'
     text: string
     dismissible?: boolean
   } | null
+  /** Handler for dismissing message */
   onDismissMessage?: () => void
+  /** Maximum width of the card */
   maxWidth?: string
+  /** Minimum width of the card */
   minWidth?: string
+  /** Internal padding variant */
   padding?: 'sm' | 'md' | 'lg'
+  /** Shadow intensity */
   shadow?: 'sm' | 'md' | 'lg'
+  /** Additional CSS classes */
+  className?: string
+  /** Custom styles */
+  style?: React.CSSProperties
 }
 
-// ResetPasswordCard Component
 export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
   onSubmit,
   onBackToSignIn,
@@ -32,18 +43,20 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
   message = null,
   onDismissMessage,
   maxWidth = '480px',
-  minWidth = '480px',
+  minWidth = '400px',
   padding = 'lg',
-  shadow = 'md'
+  shadow = 'md',
+  className,
+  style
 }) => {
   const [email, setEmail] = useState('')
   const [touched, setTouched] = useState(false)
 
-  // Email validation
+  // Email validation using more robust regex
   const validateEmail = (email: string) => {
-    if (!email) return { isValid: false, message: 'Email is required' }
+    if (!email.trim()) return { isValid: false, message: 'Email is required' }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email.trim())) {
       return { isValid: false, message: 'Please enter a valid email address' }
     }
     return { isValid: true, message: '' }
@@ -51,25 +64,27 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
 
   const emailValidation = validateEmail(email)
   const showEmailError = touched && !emailValidation.isValid
-  const isFormValid = emailValidation.isValid
+  const isFormValid = emailValidation.isValid && email.trim().length > 0
 
-  // Padding variants
+  // Padding variants using design tokens
   const paddingVariants = {
-    sm: 'var(--spacing-6)',
-    md: 'var(--spacing-8)',
-    lg: 'var(--spacing-10)'
+    sm: 'var(--spacing-6)', // 24px
+    md: 'var(--spacing-8)', // 32px
+    lg: 'var(--spacing-10)' // 40px
   }
 
-  // Shadow variants
+  // Shadow variants using design tokens
   const shadowVariants = {
-    sm: 'var(--shadow-card)',
-    md: '0 4px 16px rgba(0, 0, 0, 0.1)',
-    lg: '0 8px 32px rgba(0, 0, 0, 0.12)'
+    sm: 'var(--shadow-card)', // Light shadow
+    md: 'var(--shadow-card-hover)', // Medium shadow
+    lg: '0 8px 32px rgba(0, 0, 0, 0.12)' // Heavy shadow
   }
 
+  // Card styles using design tokens
   const cardStyles: React.CSSProperties = {
     backgroundColor: 'var(--color-white)',
     borderRadius: 'var(--border-radius-xl)',
+    border: `var(--border-width-thin) solid var(--color-border)`,
     boxShadow: shadowVariants[shadow],
     padding: paddingVariants[padding],
     width: '100%',
@@ -79,7 +94,62 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-6)',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    fontFamily: 'var(--font-family-primary)',
+    ...style
+  }
+
+  // Header styles using design tokens
+  const headerStyles: React.CSSProperties = {
+    textAlign: 'center',
+    marginBottom: 'var(--spacing-2)'
+  }
+
+  // Logo container styles using design tokens
+  const logoContainerStyles: React.CSSProperties = {
+    margin: '0 auto var(--spacing-4)',
+    display: 'flex',
+    justifyContent: 'center'
+  }
+
+  // Description styles using design tokens
+  const descriptionStyles: React.CSSProperties = {
+    fontSize: 'var(--font-size-base)',
+    fontFamily: 'var(--font-family-primary)',
+    color: 'var(--color-gray-600)',
+    lineHeight: 'var(--line-height-normal)',
+    margin: '0 0 var(--spacing-2) 0'
+  }
+
+  // Form styles using design tokens
+  const formStyles: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-5)'
+  }
+
+  // Back to sign in section styles using design tokens
+  const backSectionStyles: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-4)',
+    marginTop: 'var(--spacing-2)'
+  }
+
+  // Back button styles using design tokens
+  const backButtonStyles: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    fontSize: 'var(--font-size-base)',
+    color: 'var(--color-primary)',
+    cursor: 'pointer',
+    fontFamily: 'var(--font-family-primary)',
+    fontWeight: 'var(--font-weight-medium)',
+    textDecoration: 'none',
+    padding: 'var(--spacing-2) 0',
+    borderRadius: 'var(--border-radius-base)',
+    transition: 'var(--transition-base)',
+    outline: 'none'
   }
 
   // Handle form submission
@@ -87,12 +157,25 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     e.preventDefault()
     setTouched(true)
 
-    if (!isFormValid) {
+    if (!isFormValid || loading) {
       return
     }
 
     if (onSubmit) {
-      await onSubmit(email)
+      try {
+        await onSubmit(email.trim())
+      } catch (error) {
+        console.error('Reset password submission error:', error)
+      }
+    }
+  }
+
+  // Handle email input change
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value)
+    // Clear touched state when user starts typing again
+    if (touched && emailValidation.isValid) {
+      setTouched(false)
     }
   }
 
@@ -103,28 +186,38 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     }
   }
 
-  // Render
+  // Handle back button hover
+  const handleBackButtonMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.textDecoration = 'underline'
+    e.currentTarget.style.color = 'var(--color-primary-hover)'
+  }
+
+  const handleBackButtonMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.textDecoration = 'none'
+    e.currentTarget.style.color = 'var(--color-primary)'
+  }
+
+  const handleBackButtonFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.outline = `2px solid var(--color-primary-light)`
+    e.currentTarget.style.outlineOffset = '2px'
+  }
+
+  const handleBackButtonBlur = (e: React.FocusEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.outline = 'none'
+  }
+
   return (
-    <div style={cardStyles}>
+    <div style={cardStyles} className={className}>
       {/* Header */}
-      <div style={{ textAlign: 'center' }}>
-        <div style={{
-          margin: '0 auto var(--spacing-4)',
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <Logo size="xl" />
+      <div style={headerStyles}>
+        <div style={logoContainerStyles}>
+          <Logo size="lg" />
         </div>
-        <Heading level={1} align="center" margin="sm">
+        <Heading level={1} align="center" color="primary">
           Reset Password
         </Heading>
-        <p style={{
-          fontSize: 'var(--font-size-base)',
-          fontFamily: 'var(--font-family-primary)',
-          color: 'var(--color-gray-600)',
-          margin: '0 0 var(--spacing-8) 0'
-        }}>
-          We'll send an email with instructions.
+        <p style={descriptionStyles}>
+          Enter your email address and we'll send you instructions to reset your password.
         </p>
       </div>
 
@@ -133,30 +226,33 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
         <Alert
           type={message.type}
           size="md"
-          dismissible={message.dismissible !== true && !!onDismissMessage}
-          onClose={message.dismissible !== true ? onDismissMessage : undefined}
+          dismissible={message.dismissible === true && !!onDismissMessage}
+          onClose={message.dismissible === true ? onDismissMessage : undefined}
         >
           {message.text}
         </Alert>
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-6)' }}>
+      <form onSubmit={handleSubmit} style={formStyles}>
         <Input
           label="Email address"
           type="email"
-          placeholder="your@email.com"
+          placeholder="Enter your email address"
           showTrailingIcon={true}
           error={showEmailError}
           errorMessage={emailValidation.message}
-          showHintText={showEmailError}
-          hintText={emailValidation.message}
+          showHintText={!showEmailError}
+          hintText="We'll send reset instructions to this email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           onBlur={() => setTouched(true)}
+          required={true}
+          disabled={loading}
+          name="email"
+          id="reset-email"
         />
 
-        {/* Submit button */}
         <Button
           type="submit"
           variant="primary"
@@ -164,42 +260,28 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
           disabled={!isFormValid || loading}
           style={{ width: '100%' }}
         >
-          {loading ? 'Sending...' : 'Send reset email'}
+          {loading ? 'Sending instructions...' : 'Send reset instructions'}
         </Button>
       </form>
 
       {/* Back to sign in */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)' }}>
-        <div style={{
-          textAlign: 'center',
-          fontSize: 'var(--font-size-sm)',
-          color: 'var(--color-gray-500)',
-          fontFamily: 'var(--font-family-primary)'
-        }}>
-          <Divider text="OR" />
-        </div>
+      <div style={backSectionStyles}>
+        <Divider text="OR" color="muted" spacing="sm" />
         
         <div style={{ textAlign: 'center' }}>
           <button
             type="button"
             onClick={handleBackToSignIn}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: 'var(--font-size-base)',
-              color: 'var(--color-primary)',
-              cursor: 'pointer',
-              fontFamily: 'var(--font-family-primary)',
-              fontWeight: 'var(--font-weight-medium)',
-              textDecoration: 'none',
-              padding: 0,
-              transition: 'text-decoration 0.2s ease'
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+            style={backButtonStyles}
+            onMouseEnter={handleBackButtonMouseEnter}
+            onMouseLeave={handleBackButtonMouseLeave}
+            onFocus={handleBackButtonFocus}
+            onBlur={handleBackButtonBlur}
+            disabled={loading}
+            aria-label="Go back to sign in page"
           >
-            Back to Sign In
-        </button>
+            ← Back to Sign In
+          </button>
         </div>
       </div>
     </div>

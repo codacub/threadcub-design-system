@@ -1,13 +1,11 @@
-// src/stories/ResetPasswordCard.stories.tsx
+// stories/ResetPasswordCard.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import React from 'react'
+import { useState } from 'react'
 import { ResetPasswordCard } from '../components/ResetPasswordCard'
-
-// Import your tokens
 import '../styles/tokens.css'
 
-const meta = {
+const meta: Meta<typeof ResetPasswordCard> = {
   title: 'Components/ResetPasswordCard',
   component: ResetPasswordCard,
   parameters: {
@@ -22,173 +20,402 @@ const meta = {
     },
     docs: {
       description: {
-        component: 'A card component for password reset functionality with email input and validation.'
+        component:
+          'A comprehensive password reset card component with email validation, loading states, message handling, and full design token integration. Features proper accessibility and form handling.'
       }
     }
   },
-  tags: ['autodocs'],
   argTypes: {
     loading: {
-      control: 'boolean',
-      description: 'Shows loading state when true'
+      control: { type: 'boolean' },
+      description: 'Shows loading state when true',
+      table: { defaultValue: { summary: 'false' } }
     },
     maxWidth: {
-      control: 'text',
-      description: 'Maximum width of the card'
+      control: { type: 'text' },
+      description: 'Maximum width of the card',
+      table: { defaultValue: { summary: '480px' } }
     },
     minWidth: {
-      control: 'text',
-      description: 'Minimum width of the card'
+      control: { type: 'text' },
+      description: 'Minimum width of the card',
+      table: { defaultValue: { summary: '400px' } }
     },
     padding: {
       control: { type: 'select' },
       options: ['sm', 'md', 'lg'],
-      description: 'Internal padding of the card'
+      description: 'Internal padding of the card',
+      table: { defaultValue: { summary: 'lg' } }
     },
     shadow: {
       control: { type: 'select' },
       options: ['sm', 'md', 'lg'],
-      description: 'Drop shadow intensity'
+      description: 'Drop shadow intensity',
+      table: { defaultValue: { summary: 'md' } }
     },
     message: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Message to display (success, error, info, warning)'
+    },
+    onSubmit: {
+      action: 'submitted',
+      description: 'Submit handler for the email'
+    },
+    onBackToSignIn: {
+      action: 'back-to-signin',
+      description: 'Handler for back to sign in button'
+    },
+    onDismissMessage: {
+      action: 'message-dismissed',
+      description: 'Handler for dismissing message'
     }
   },
   args: {
-    onSubmit: fn() as (email: string) => Promise<void>,
-    onBackToSignIn: fn() as () => void,
-    onDismissMessage: fn() as () => void
-  }
-} satisfies Meta<typeof ResetPasswordCard>
+    onSubmit: fn(),
+    onBackToSignIn: fn(),
+    onDismissMessage: fn(),
+    loading: false,
+    padding: 'lg',
+    shadow: 'md'
+  },
+  tags: ['autodocs']
+}
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof ResetPasswordCard>
 
-// Default handlers
-const defaultHandlers = {
-  onSubmit: async (email: string) => {
-    console.log('Reset password for:', email)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    alert(`Password reset email sent to ${email}`)
-  },
-  onBackToSignIn: () => console.log('Back to sign in clicked'),
-  onDismissMessage: () => console.log('Message dismissed'),
-}
-
-// Default state
+// Basic variants
 export const Default: Story = {
-  args: {
-    ...defaultHandlers,
-  }
+  args: {}
 }
 
-// Loading state
 export const Loading: Story = {
   args: {
-    loading: true,
-    ...defaultHandlers,
+    loading: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Loading state with disabled form elements and loading text on the submit button.'
+      }
+    }
   }
 }
 
-// With success message
+// Message variants
 export const WithSuccessMessage: Story = {
   args: {
     message: {
       type: 'success',
-      text: 'Password reset email sent! Check your inbox.',
+      text: 'Password reset email sent successfully! Check your inbox for instructions.',
       dismissible: true
-    },
-    ...defaultHandlers,
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Success state showing confirmation that the reset email was sent.'
+      }
+    }
   }
 }
 
-// With error message
 export const WithErrorMessage: Story = {
   args: {
     message: {
       type: 'error',
-      text: 'Email address not found. Please try again.',
+      text: 'Email address not found in our system. Please check your email and try again.',
       dismissible: true
-    },
-    ...defaultHandlers,
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Error state when the email address is not found or invalid.'
+      }
+    }
   }
 }
 
-// With info message
 export const WithInfoMessage: Story = {
   args: {
     message: {
       type: 'info',
-      text: 'If this email exists in our system, you will receive reset instructions.',
+      text: 'If this email exists in our system, you will receive reset instructions within 5 minutes.',
       dismissible: true
-    },
-    ...defaultHandlers,
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Info message providing additional context about the reset process.'
+      }
+    }
   }
 }
 
-// With warning message
 export const WithWarningMessage: Story = {
   args: {
     message: {
       type: 'warning',
-      text: 'Password reset requests are limited to 3 per hour.',
+      text: 'You have reached the limit of 3 password reset requests per hour. Please try again later.',
       dismissible: true
-    },
-    ...defaultHandlers,
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Warning message for rate limiting or other cautions.'
+      }
+    }
   }
 }
 
-// Non-dismissible message
 export const WithPersistentMessage: Story = {
   args: {
     message: {
       type: 'info',
-      text: 'This message cannot be dismissed.',
+      text: 'For security reasons, we don\'t reveal whether an email exists in our system.',
       dismissible: false
-    },
-    ...defaultHandlers,
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Non-dismissible message that stays visible for important information.'
+      }
+    }
   }
 }
 
-// Small card variant
-export const SmallCard: Story = {
+// Size and style variants
+export const CompactCard: Story = {
   args: {
     maxWidth: '360px',
     minWidth: '320px',
     padding: 'sm',
-    shadow: 'sm',
-    ...defaultHandlers,
+    shadow: 'sm'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Compact version with smaller dimensions and padding, suitable for mobile or tight spaces.'
+      }
+    }
   }
 }
 
-// Large card variant  
 export const LargeCard: Story = {
   args: {
-    maxWidth: '520px',
+    maxWidth: '560px',
     minWidth: '480px',
     padding: 'lg',
-    shadow: 'lg',
-    ...defaultHandlers,
+    shadow: 'lg'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Large version with generous spacing and prominent shadow for desktop applications.'
+      }
+    }
   }
 }
 
-// Wide card variant
-export const WideCard: Story = {
+export const MediumCard: Story = {
   args: {
-    maxWidth: '600px',
-    minWidth: '500px',
-    padding: 'lg',
-    shadow: 'md',
-    ...defaultHandlers,
+    maxWidth: '440px',
+    minWidth: '380px',
+    padding: 'md',
+    shadow: 'md'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Medium-sized card with balanced proportions for most use cases.'
+      }
+    }
   }
 }
 
-// Interactive demo with state management
-export const Interactive: Story = {
-  render: (args) => {
-    const [loading, setLoading] = React.useState(false)
-    const [message, setMessage] = React.useState<{
+// All sizes comparison
+export const AllSizes: Story = {
+  render: () => (
+    <div style={{ 
+      display: 'grid',
+      gap: 'var(--spacing-8)',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+      fontFamily: 'var(--font-family-primary)'
+    }}>
+      <div>
+        <h3 style={{ 
+          fontSize: 'var(--font-size-lg)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: '0 0 var(--spacing-4) 0',
+          textAlign: 'center'
+        }}>
+          Small
+        </h3>
+        <ResetPasswordCard
+          maxWidth="320px"
+          minWidth="280px"
+          padding="sm"
+          shadow="sm"
+        />
+      </div>
+      
+      <div>
+        <h3 style={{ 
+          fontSize: 'var(--font-size-lg)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: '0 0 var(--spacing-4) 0',
+          textAlign: 'center'
+        }}>
+          Medium
+        </h3>
+        <ResetPasswordCard
+          maxWidth="400px"
+          minWidth="360px"
+          padding="md"
+          shadow="md"
+        />
+      </div>
+      
+      <div>
+        <h3 style={{ 
+          fontSize: 'var(--font-size-lg)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: '0 0 var(--spacing-4) 0',
+          textAlign: 'center'
+        }}>
+          Large
+        </h3>
+        <ResetPasswordCard
+          maxWidth="520px"
+          minWidth="480px"
+          padding="lg"
+          shadow="lg"
+        />
+      </div>
+    </div>
+  ),
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story: 'Comparison of all card sizes showing different padding and shadow options.'
+      }
+    }
+  }
+}
+
+// All message types comparison
+export const AllMessageTypes: Story = {
+  render: () => (
+    <div style={{ 
+      display: 'grid',
+      gap: 'var(--spacing-6)',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+      fontFamily: 'var(--font-family-primary)'
+    }}>
+      <div>
+        <h3 style={{ 
+          fontSize: 'var(--font-size-base)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: '0 0 var(--spacing-3) 0',
+          textAlign: 'center'
+        }}>
+          Success Message
+        </h3>
+        <ResetPasswordCard
+          maxWidth="380px"
+          message={{
+            type: 'success',
+            text: 'Reset email sent successfully!',
+            dismissible: true
+          }}
+        />
+      </div>
+      
+      <div>
+        <h3 style={{ 
+          fontSize: 'var(--font-size-base)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: '0 0 var(--spacing-3) 0',
+          textAlign: 'center'
+        }}>
+          Error Message
+        </h3>
+        <ResetPasswordCard
+          maxWidth="380px"
+          message={{
+            type: 'error',
+            text: 'Email address not found.',
+            dismissible: true
+          }}
+        />
+      </div>
+      
+      <div>
+        <h3 style={{ 
+          fontSize: 'var(--font-size-base)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: '0 0 var(--spacing-3) 0',
+          textAlign: 'center'
+        }}>
+          Warning Message
+        </h3>
+        <ResetPasswordCard
+          maxWidth="380px"
+          message={{
+            type: 'warning',
+            text: 'Rate limit exceeded.',
+            dismissible: true
+          }}
+        />
+      </div>
+      
+      <div>
+        <h3 style={{ 
+          fontSize: 'var(--font-size-base)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: '0 0 var(--spacing-3) 0',
+          textAlign: 'center'
+        }}>
+          Info Message
+        </h3>
+        <ResetPasswordCard
+          maxWidth="380px"
+          message={{
+            type: 'info',
+            text: 'Check your email for instructions.',
+            dismissible: true
+          }}
+        />
+      </div>
+    </div>
+  ),
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story: 'Comparison of all message types: success, error, warning, and info.'
+      }
+    }
+  }
+}
+
+// Interactive demo with full state management
+export const InteractiveDemo: Story = {
+  render: () => {
+    const [loading, setLoading] = useState(false)
+    const [message, setMessage] = useState<{
       type: 'success' | 'error' | 'info' | 'warning'
       text: string
       dismissible?: boolean
@@ -200,33 +427,38 @@ export const Interactive: Story = {
 
       try {
         console.log('Submitting reset for:', email)
-        // Simulate API call
+        // Simulate API call with different outcomes based on email
         await new Promise(resolve => setTimeout(resolve, 2000))
         
-        // Simulate different outcomes based on email
-        if (email.includes('notfound')) {
+        if (email.toLowerCase().includes('notfound')) {
           setMessage({
             type: 'error',
-            text: 'Email address not found in our system.',
+            text: 'Email address not found in our system. Please check your email and try again.',
             dismissible: true
           })
-        } else if (email.includes('blocked')) {
+        } else if (email.toLowerCase().includes('blocked')) {
           setMessage({
             type: 'warning',
-            text: 'Too many reset attempts. Please try again later.',
+            text: 'You have exceeded the maximum number of reset attempts. Please try again in 1 hour.',
             dismissible: true
+          })
+        } else if (email.toLowerCase().includes('info')) {
+          setMessage({
+            type: 'info',
+            text: 'If this email exists in our system, you will receive reset instructions within 5 minutes.',
+            dismissible: false
           })
         } else {
           setMessage({
             type: 'success',
-            text: `Password reset email sent to ${email}!`,
+            text: `Password reset instructions have been sent to ${email}. Please check your inbox and spam folder.`,
             dismissible: true
           })
         }
       } catch (error) {
         setMessage({
           type: 'error',
-          text: 'Something went wrong. Please try again.',
+          text: 'Something went wrong. Please try again in a few moments.',
           dismissible: true
         })
       } finally {
@@ -244,24 +476,111 @@ export const Interactive: Story = {
     }
 
     return (
-      <ResetPasswordCard
-        {...args}
-        loading={loading}
-        message={message}
-        onSubmit={handleSubmit}
-        onBackToSignIn={handleBackToSignIn}
-        onDismissMessage={handleDismissMessage}
-      />
+      <div style={{
+        maxWidth: '500px',
+        margin: '0 auto',
+        fontFamily: 'var(--font-family-primary)'
+      }}>
+        <div style={{
+          marginBottom: 'var(--spacing-6)',
+          padding: 'var(--spacing-4)',
+          backgroundColor: 'var(--color-gray-50)',
+          borderRadius: 'var(--border-radius-lg)',
+          border: `var(--border-width-thin) solid var(--color-gray-200)`
+        }}>
+          <h3 style={{
+            fontSize: 'var(--font-size-base)',
+            fontWeight: 'var(--font-weight-semibold)',
+            color: 'var(--color-gray-900)',
+            margin: '0 0 var(--spacing-2) 0'
+          }}>
+            Interactive Demo
+          </h3>
+          <p style={{
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-gray-600)',
+            margin: '0 0 var(--spacing-2) 0',
+            lineHeight: 'var(--line-height-normal)'
+          }}>
+            Try different email addresses to see different responses:
+          </p>
+          <ul style={{
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-gray-600)',
+            margin: 0,
+            paddingLeft: 'var(--spacing-4)',
+            lineHeight: 'var(--line-height-normal)'
+          }}>
+            <li><code>user@notfound.com</code> - Error message</li>
+            <li><code>user@blocked.com</code> - Warning message</li>
+            <li><code>user@info.com</code> - Info message (persistent)</li>
+            <li><code>user@example.com</code> - Success message</li>
+          </ul>
+        </div>
+
+        <ResetPasswordCard
+          loading={loading}
+          message={message}
+          onSubmit={handleSubmit}
+          onBackToSignIn={handleBackToSignIn}
+          onDismissMessage={handleDismissMessage}
+          maxWidth="480px"
+          minWidth="400px"
+        />
+      </div>
     )
   },
-  args: {
-    maxWidth: '480px',
-    minWidth: '400px',
-  },
   parameters: {
+    layout: 'centered',
     docs: {
       description: {
-        story: 'Interactive version with working form submission and state management. Try different emails: "test@notfound.com" for error, "user@blocked.com" for warning, or any other email for success.'
+        story: 'Fully interactive demo with real form submission, loading states, and different message outcomes. Try the suggested email addresses to see various responses.'
+      }
+    }
+  }
+}
+
+// Real-world auth flow context
+export const InAuthFlow: Story = {
+  render: () => (
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: 'var(--color-gray-50)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 'var(--spacing-4)',
+      fontFamily: 'var(--font-family-primary)'
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '500px'
+      }}>
+        <ResetPasswordCard
+          maxWidth="480px"
+          minWidth="400px"
+          padding="lg"
+          shadow="lg"
+        />
+        
+        <div style={{
+          textAlign: 'center',
+          marginTop: 'var(--spacing-6)',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-gray-500)'
+        }}>
+          <p style={{ margin: 0 }}>
+            Need help? <a href="#" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>Contact support</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  ),
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story: 'Reset password card in a realistic authentication flow context with proper spacing and background.'
       }
     }
   }

@@ -44,17 +44,20 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     sm: {
       checkbox: 'var(--spacing-4)', // 16px
       fontSize: 'var(--font-size-sm)',
-      gap: 'var(--spacing-2)'
+      gap: 'var(--spacing-2)',
+      iconSize: 10
     },
     md: {
       checkbox: 'var(--spacing-5)', // 20px  
       fontSize: 'var(--font-size-base)',
-      gap: 'var(--spacing-3)'
+      gap: 'var(--spacing-3)',
+      iconSize: 12
     },
     lg: {
       checkbox: 'var(--spacing-6)', // 24px
       fontSize: 'var(--font-size-lg)',
-      gap: 'var(--spacing-3)'
+      gap: 'var(--spacing-3)',
+      iconSize: 14
     }
   }
 
@@ -73,7 +76,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   // Container styles using design tokens
   const containerStyles: React.CSSProperties = {
     display: 'flex',
-    alignItems: 'center', // Changed from 'flex-start' to 'center'
+    alignItems: 'center',
     gap: sizeConfig.gap,
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? '0.6' : '1',
@@ -97,7 +100,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     width: sizeConfig.checkbox,
     height: sizeConfig.checkbox,
     borderRadius: 'var(--border-radius-base)',
-    border: `var(--border-width-thin) solid ${checked ? 'var(--color-primary)' : 'var(--color-gray-400)'}`,
+    border: `var(--border-width-checkbox) solid ${checked ? 'var(--color-primary)' : 'var(--color-gray-400)'}`,
     backgroundColor: checked ? 'var(--color-primary)' : 'var(--color-white)',
     display: 'flex',
     alignItems: 'center',
@@ -111,13 +114,13 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
   // Focus styles using design tokens
   const focusStyles: React.CSSProperties = {
-    outline: `var(--border-width-medium) solid var(--color-primary)`,
+    outline: `var(--border-width-medium) solid var(--color-primary-light)`,
     outlineOffset: 'var(--spacing-1)'
   }
 
   // Hover styles using design tokens
   const hoverStyles: React.CSSProperties = {
-    borderColor: checked ? 'var(--color-primary-hover)' : 'var(--color-gray-400)',
+    borderColor: checked ? 'var(--color-primary-hover)' : 'var(--color-gray-500)',
     backgroundColor: checked ? 'var(--color-primary-hover)' : 'var(--color-gray-50)'
   }
 
@@ -131,21 +134,22 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     fontWeight: 'var(--font-weight-normal)'
   }
 
-  // Checkmark SVG with proper sizing
+  // Checkmark SVG with responsive sizing
   const CheckmarkIcon = () => (
     <svg
-      width="12"
-      height="12"
+      width={sizeConfig.iconSize}
+      height={sizeConfig.iconSize}
       viewBox="0 0 12 12"
       fill="none"
       style={{
         opacity: checked ? 1 : 0,
-        transition: `opacity var(--transition-base)`
+        transition: `opacity var(--transition-base)`,
+        flexShrink: 0
       }}
     >
       <path
         d="M2 6L4.5 8.5L10 3"
-        stroke="white"
+        stroke="var(--color-white)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

@@ -357,7 +357,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)' }}>
         {/* Toggle mode with split text styling */}
         <div style={{
-          fontSize: 'var(--font-size-sm)',
+          fontSize: 'var(--font-size-base)',
           fontFamily: 'var(--font-family-primary)',
           color: 'var(--color-gray-600)',
           textAlign: 'center'
@@ -371,11 +371,11 @@ export const AuthCard: React.FC<AuthCardProps> = ({
                 style={{
                   background: 'none',
                   border: 'none',
-                  fontSize: 'var(--font-size-sm)',
+                  fontSize: 'var(--font-size-base)',
                   color: 'var(--color-primary)',
                   cursor: 'pointer',
                   fontFamily: 'var(--font-family-primary)',
-                  fontWeight: 'var(--font-weight-medium)',
+                  fontWeight: 'var(--font-weight-normal)',
                   textDecoration: 'none',
                   padding: 0,
                   transition: 'text-decoration var(--transition-base)'
@@ -395,11 +395,11 @@ export const AuthCard: React.FC<AuthCardProps> = ({
                 style={{
                   background: 'none',
                   border: 'none',
-                  fontSize: 'var(--font-size-sm)',
+                  fontSize: 'var(--font-size-base)',
                   color: 'var(--color-primary)',
                   cursor: 'pointer',
                   fontFamily: 'var(--font-family-primary)',
-                  fontWeight: 'var(--font-weight-medium)',
+                  fontWeight: 'var(--font-weight-normal)',
                   textDecoration: 'none',
                   padding: 0,
                   transition: 'text-decoration var(--transition-base)'
@@ -415,7 +415,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
 
         {/* Terms and Privacy disclaimer */}
         <div style={{
-          fontSize: 'var(--font-size-sm)',
+          fontSize: 'var(--font-size-base)',
           color: 'var(--color-gray-500)',
           textAlign: 'center',
           fontFamily: 'var(--font-family-primary)',
@@ -428,7 +428,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
             style={{
               color: 'var(--color-gray-900)',
               textDecoration: 'none',
-              fontWeight: 'var(--font-weight-medium)',
+              fontWeight: 'var(--font-weight-normal)',
               transition: 'text-decoration var(--transition-base)'
             }}
             onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
@@ -442,7 +442,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
             style={{
               color: 'var(--color-gray-900)',
               textDecoration: 'none',
-              fontWeight: 'var(--font-weight-medium)',
+              fontWeight: 'var(--font-weight-normal)',
               transition: 'text-decoration var(--transition-base)'
             }}
             onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}

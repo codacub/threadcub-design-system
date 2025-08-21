@@ -15,6 +15,8 @@
   --color-primary-hover: #6D28D9;
   --color-primary-light: #A855F7; /* For focus rings - lighter version of primary */
   --color-primary-dark: #5B21B6; /* For hover states - darker version of primary */
+  --color-primary-bg: #F3F0FF; /* Light purple background for selected nav items */
+  --color-primary-text: #7C3AED; /* Primary purple for selected text/icons */
 
   /* Neutrals */
   --color-white: #FFFFFF;
@@ -217,6 +219,12 @@
   --action-button-size: 32px; /* From floating-button.js */
   --shadow-button-size: 48px; /* From floating-button.js */
   --toast-height: 40px; /* From floating-button.js */
+
+  /* Sidebar specific spacing */
+  --sidebar-width-expanded: 280px; /* Wider to match Calendly */
+  --sidebar-width-collapsed: 64px;
+  --sidebar-nav-item-height: 40px; /* Consistent nav item height */
+  --sidebar-nav-gap: 2px; /* Tight gap between nav items */
 
 /* Input placeholder text */
 input::placeholder {

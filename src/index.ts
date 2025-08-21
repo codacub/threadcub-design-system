@@ -12,6 +12,16 @@ export { Heading } from './components/Heading'
 export { ResetPasswordCard } from './components/ResetPasswordCard'
 export { Checkbox } from './components/Checkbox'
 
+// Layout Components - Main Components
+export { SideNav } from './components/SideNav'
+export { AppLayout } from './components/AppLayout'
+
+// Layout Components - Modular SideNav Components  
+export { Badge } from './components/Badge'
+export { SideNavHeader } from './components/SideNavHeader'
+export { SideNavItem as SideNavItemComponent } from './components/SideNavItem'  // <- Alias the export
+export { UserSection } from './components/UserSection'
+
 // Export all types
 export type { ButtonProps } from './components/Button'
 export type { InputProps } from './components/Input'
@@ -21,3 +31,15 @@ export type { SocialButtonProps } from './components/SocialButton'
 export type { HeadingProps } from './components/Heading'
 export type { ResetPasswordCardProps } from './components/ResetPasswordCard'
 export type { CheckboxProps } from './components/Checkbox'
+
+// Layout Component Types - Main Components
+// Fixed: Export the correct interface names from SideNav.tsx
+export type { SideNavItemData as SideNavItem, SideNavProps } from './components/SideNav'
+export type { AppLayoutProps } from './components/AppLayout'
+
+// Layout Component Types - Modular Components
+export type { BadgeProps } from './components/Badge'
+export type { SideNavHeaderProps } from './components/SideNavHeader'
+// Removed this line since SideNavItemComponentProps doesn't exist yet
+// export type { SideNavItemComponentProps } from './components/SideNavItem'
+export type { UserSectionProps, UserInfo } from './components/UserSection'

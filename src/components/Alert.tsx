@@ -31,7 +31,8 @@ export const Alert: React.FC<AlertProps> = ({
       lineHeight: 'var(--line-height-tight)',
       radius: 'var(--border-radius-base)',
       icon: 16,
-      close: 14
+      close: 14,
+      closeButtonPadding: 'var(--spacing-1)'
     },
     md: {
       gap: 'var(--spacing-3)',
@@ -41,7 +42,8 @@ export const Alert: React.FC<AlertProps> = ({
       lineHeight: 'var(--line-height-normal)',
       radius: 'var(--border-radius-lg)',
       icon: 20,
-      close: 16
+      close: 16,
+      closeButtonPadding: 'var(--spacing-1)'
     },
     lg: {
       gap: 'var(--spacing-4)',
@@ -51,7 +53,8 @@ export const Alert: React.FC<AlertProps> = ({
       lineHeight: 'var(--line-height-normal)',
       radius: 'var(--border-radius-xl)',
       icon: 22,
-      close: 18
+      close: 18,
+      closeButtonPadding: 'var(--spacing-2)'
     }
   }[size]
 
@@ -59,14 +62,14 @@ export const Alert: React.FC<AlertProps> = ({
   const SuccessIcon = ({ s }: { s: number }) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      style={{ display: 'block' }} aria-hidden="true">
+      style={{ display: 'block', flexShrink: 0 }} aria-hidden="true">
       <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/>
     </svg>
   )
   const ErrorIcon = ({ s }: { s: number }) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      style={{ display: 'block' }} aria-hidden="true">
+      style={{ display: 'block', flexShrink: 0 }} aria-hidden="true">
       <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/>
       <path d="M12 9v4"/><path d="M12 17h.01"/>
     </svg>
@@ -74,14 +77,14 @@ export const Alert: React.FC<AlertProps> = ({
   const InfoIcon = ({ s }: { s: number }) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      style={{ display: 'block' }} aria-hidden="true">
+      style={{ display: 'block', flexShrink: 0 }} aria-hidden="true">
       <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
     </svg>
   )
   const WarningIcon = ({ s }: { s: number }) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      style={{ display: 'block' }} aria-hidden="true">
+      style={{ display: 'block', flexShrink: 0 }} aria-hidden="true">
       <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/>
       <path d="M12 9v4"/><path d="M12 17h.01"/>
     </svg>
@@ -89,7 +92,7 @@ export const Alert: React.FC<AlertProps> = ({
   const CloseIcon = ({ s }: { s: number }) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      style={{ display: 'block' }} aria-hidden="true">
+      style={{ display: 'block', flexShrink: 0 }} aria-hidden="true">
       <path d="M18 6 6 18"/><path d="M6 6l12 12"/>
     </svg>
   )
@@ -103,7 +106,7 @@ export const Alert: React.FC<AlertProps> = ({
     }
   }
 
-  // ---- color variants (no borders) ----
+  // ---- color variants (using exact tokens from tokens.css) ----
   const surfaceStyles: React.CSSProperties =
     type === 'success' ? { backgroundColor: 'var(--color-alert-success-bg)', color: 'var(--color-alert-success-text)' } :
     type === 'error'   ? { backgroundColor: 'var(--color-alert-error-bg)',   color: 'var(--color-alert-error-text)' } :
@@ -114,7 +117,7 @@ export const Alert: React.FC<AlertProps> = ({
   const baseStyles: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: 'auto 1fr auto',
-    alignItems: 'start',      
+    alignItems: 'center',      
     gap: S.gap,
     paddingInline: S.px,
     paddingBlock: S.py,                 
@@ -127,17 +130,24 @@ export const Alert: React.FC<AlertProps> = ({
     ...style
   }
 
-  const contentStyles: React.CSSProperties = { margin: 0 }
+  const contentStyles: React.CSSProperties = { 
+    margin: 0,
+    minWidth: 0 // Allows text to wrap properly in grid
+  }
 
   const closeButtonStyles: React.CSSProperties = {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    padding: '2px',
+    padding: S.closeButtonPadding,
     borderRadius: 'var(--border-radius-base)',
     color: 'currentColor',
     opacity: 0.75,
-    transition: 'opacity var(--transition-base)'
+    transition: 'opacity var(--transition-base)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
   }
 
   return (
@@ -147,7 +157,9 @@ export const Alert: React.FC<AlertProps> = ({
       style={baseStyles}
       className={className}
     >
-      <span aria-hidden="true"><IconForType /></span>
+      <span aria-hidden="true" style={{ display: 'flex', alignItems: 'center' }}>
+        <IconForType />
+      </span>
       <div style={contentStyles}>{children}</div>
 
       {dismissible && onClose ? (
@@ -162,8 +174,12 @@ export const Alert: React.FC<AlertProps> = ({
           <CloseIcon s={S.close} />
         </button>
       ) : (
-        // reserve space so text doesn’t shift between dismissible/non-dismissible
-        <span aria-hidden="true" style={{ width: S.close, height: S.close }} />
+        // Reserve space so text doesn't shift between dismissible/non-dismissible
+        <span aria-hidden="true" style={{ 
+          width: S.close, 
+          height: S.close,
+          flexShrink: 0
+        }} />
       )}
     </div>
   )

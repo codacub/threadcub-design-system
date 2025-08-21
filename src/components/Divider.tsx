@@ -1,20 +1,27 @@
 // src/components/Divider.tsx
 import React from 'react'
 
-// Divider component interface
 export interface DividerProps {
+  /** Text to display in the center of the divider */
   text?: string
+  /** Color variant for line and text */
   color?: 'gray' | 'light' | 'muted'
+  /** Spacing above and below the divider */
   spacing?: 'sm' | 'md' | 'lg'
+  /** Additional CSS classes */
+  className?: string
+  /** Custom styles */
+  style?: React.CSSProperties
 }
 
-// Divider Component
 export const Divider: React.FC<DividerProps> = ({
   text = 'OR',
   color = 'gray',
-  spacing = 'md'
+  spacing = 'md',
+  className,
+  style
 }) => {
-  // Color variants
+  // Color variants using design tokens
   const colorVariants = {
     gray: {
       line: 'var(--color-gray-300)',
@@ -30,7 +37,7 @@ export const Divider: React.FC<DividerProps> = ({
     }
   }
 
-  // Spacing variants
+  // Spacing variants using design tokens
   const spacingVariants = {
     sm: 'var(--spacing-4)',
     md: 'var(--spacing-6)',
@@ -42,12 +49,14 @@ export const Divider: React.FC<DividerProps> = ({
     alignItems: 'center',
     width: '100%',
     margin: `${spacingVariants[spacing]} 0`,
+    ...style
   }
 
   const lineStyles: React.CSSProperties = {
     flex: 1,
-    height: '1px',
+    height: 'var(--border-width-thin)',
     backgroundColor: colorVariants[color].line,
+    border: 'none'
   }
 
   const textStyles: React.CSSProperties = {
@@ -57,10 +66,28 @@ export const Divider: React.FC<DividerProps> = ({
     padding: `0 var(--spacing-4)`,
     backgroundColor: 'var(--color-white)',
     fontFamily: 'var(--font-family-primary)',
+    lineHeight: '1',
+    whiteSpace: 'nowrap',
+    userSelect: 'none'
+  }
+
+  // If no text is provided, render just a line
+  if (!text) {
+    return (
+      <div 
+        className={className}
+        style={{
+          ...containerStyles,
+          padding: 0
+        }}
+      >
+        <div style={lineStyles} />
+      </div>
+    )
   }
 
   return (
-    <div style={containerStyles}>
+    <div className={className} style={containerStyles}>
       <div style={lineStyles} />
       <span style={textStyles}>{text}</span>
       <div style={lineStyles} />
