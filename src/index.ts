@@ -11,6 +11,11 @@ export { SocialButton } from './components/SocialButton'
 export { Heading } from './components/Heading'
 export { ResetPasswordCard } from './components/ResetPasswordCard'
 export { Checkbox } from './components/Checkbox'
+export { Alert } from './components/Alert'
+
+// Dashboard Components - New additions
+export { StatsCard } from './components/StatsCard'
+export { ConversationCard } from './components/ConversationCard'
 
 // Layout Components - Main Components
 export { SideNav } from './components/SideNav'
@@ -31,6 +36,11 @@ export type { SocialButtonProps } from './components/SocialButton'
 export type { HeadingProps } from './components/Heading'
 export type { ResetPasswordCardProps } from './components/ResetPasswordCard'
 export type { CheckboxProps } from './components/Checkbox'
+export type { AlertProps } from './components/Alert'
+
+// Dashboard Component Types - New additions
+export type { StatsCardProps } from './components/StatsCard'
+export type { ConversationCardProps, ConversationData, AnalysisResult } from './components/ConversationCard'
 
 // Layout Component Types - Main Components
 // Fixed: Export the correct interface names from SideNav.tsx
