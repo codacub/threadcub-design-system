@@ -71,7 +71,7 @@ export const Divider: React.FC<DividerProps> = ({
     userSelect: 'none'
   }
 
-  // If no text is provided, render just a line
+  // If no text is provided, render just a line..
   if (!text) {
     return (
       <div 
