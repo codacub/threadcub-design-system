@@ -99,7 +99,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         <div 
           style={{
             flex: 1,
-            padding: 'var(--spacing-6)',
             overflow: 'auto'
           }}
         >
