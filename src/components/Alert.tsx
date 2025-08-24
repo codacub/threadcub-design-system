@@ -1,12 +1,26 @@
 // src/components/Alert.tsx
 import React from 'react'
+import { Heading } from './Heading' // Add this import
 
 export interface AlertProps {
   type: 'success' | 'error' | 'info' | 'warning'
   size?: 'sm' | 'md' | 'lg'
   children: React.ReactNode
+  title?: string 
   onClose?: () => void
   /** If false, the close button is hidden even if onClose is provided */
+  dismissible?: boolean
+  className?: string
+  style?: React.CSSProperties
+}
+
+// First, update the AlertProps interface to include title:
+export interface AlertProps {
+  type: 'success' | 'error' | 'info' | 'warning'
+  size?: 'sm' | 'md' | 'lg'
+  children: React.ReactNode
+  title?: string // Add this line
+  onClose?: () => void
   dismissible?: boolean
   className?: string
   style?: React.CSSProperties
@@ -16,6 +30,7 @@ export const Alert: React.FC<AlertProps> = ({
   type,
   size = 'md',
   children,
+  title, // Add this parameter
   onClose,
   dismissible = true,
   className,
@@ -115,24 +130,33 @@ export const Alert: React.FC<AlertProps> = ({
 
   // ---- layout ----
   const baseStyles: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr auto',
-    alignItems: 'center',      
-    gap: S.gap,
-    paddingInline: S.px,
-    paddingBlock: S.py,                 
-    borderRadius: S.radius,
-    fontFamily: 'var(--font-family-primary)',
-    fontWeight: 'var(--font-weight-medium)',
-    fontSize: S.fontSize,
-    lineHeight: S.lineHeight,
-    ...surfaceStyles,
-    ...style
+  display: 'grid',
+  gridTemplateColumns: 'auto 1fr auto',
+  alignItems: 'flex-start', // Always use flex-start
+  gap: S.gap,
+  paddingInline: S.px,
+  paddingBlock: S.py,                 
+  borderRadius: S.radius,
+  fontFamily: 'var(--font-family-primary)',
+  fontWeight: 'var(--font-weight-medium)',
+  fontSize: S.fontSize,
+  lineHeight: S.lineHeight,
+  ...surfaceStyles,
+  ...style
   }
 
   const contentStyles: React.CSSProperties = { 
-    margin: 0,
-    minWidth: 0 // Allows text to wrap properly in grid
+  margin: 0,
+  minWidth: 0,
+  wordBreak: 'break-word',
+  overflowWrap: 'break-word',
+  paddingTop: title 
+    ? '0'
+    : size === 'sm' 
+      ? '6px' // Slightly less than icon to fine-tune alignment
+      : size === 'md' 
+        ? '2px' 
+        : '6px' // for lg
   }
 
   const closeButtonStyles: React.CSSProperties = {
@@ -157,10 +181,40 @@ export const Alert: React.FC<AlertProps> = ({
       style={baseStyles}
       className={className}
     >
-      <span aria-hidden="true" style={{ display: 'flex', alignItems: 'center' }}>
-        <IconForType />
-      </span>
-      <div style={contentStyles}>{children}</div>
+      <span aria-hidden="true" style={{ 
+  display: 'flex', 
+  alignItems: 'flex-start',
+  paddingTop: title 
+    ? 'var(--spacing-1)' 
+    : size === 'sm' 
+      ? '6px' 
+      : size === 'md' 
+        ? '3px' 
+        : '8px' // for lg and default
+}}>
+  <IconForType />
+</span>
+      
+      <div style={contentStyles}>
+  {title && (
+    <Heading 
+  level={4} 
+  margin="none" 
+  style={{ 
+    marginBottom: 'var(--spacing-0)',
+    fontSize: size === 'lg' ? 'var(--font-size-lg)' : size === 'md' ? 'var(--font-size-base)' : 'var(--font-size-sm)', 
+    color: 'inherit'
+  }}
+>
+  {title}
+</Heading>
+  )}
+  <div style={{
+    fontWeight: title ? 'var(--font-weight-normal)' : 'var(--font-weight-medium)'
+  }}>
+    {children}
+  </div>
+</div>
 
       {dismissible && onClose ? (
         <button

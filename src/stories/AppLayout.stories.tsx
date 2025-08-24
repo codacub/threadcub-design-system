@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { AppLayout } from '../components/AppLayout'
+import { Button } from '../components/Button' // ✅ FIXED import path
+import { Heading } from '../components/Heading' // ✅ ADD Heading component
 
 const meta: Meta<typeof AppLayout> = {
   title: 'Layout/AppLayout',
@@ -8,7 +10,7 @@ const meta: Meta<typeof AppLayout> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Complete application layout with sidebar navigation and main content area'
+        component: 'Complete application layout with sidebar navigation and main content area. Content now extends full width with no internal padding.'
       }
     }
   },
@@ -64,26 +66,18 @@ const sampleUser = {
   email: 'mrteststuff44@gmail.com'
 }
 
-// Dashboard Content Component
+// Dashboard Content Component - Updated with proper padding
 const DashboardContent = () => (
-  <div>
+  <div style={{ padding: 'var(--spacing-8) var(--spacing-6)' }}>
     <div 
-      className="mb-6"
-      style={{ marginBottom: 'var(--spacing-lg)' }}
+      style={{ marginBottom: 'var(--spacing-6)' }}
     >
-      <h1 
-        style={{
-          fontSize: 'var(--font-size-2xl)',
-          fontWeight: 'var(--font-weight-bold)',
-          color: 'var(--color-text-primary)',
-          marginBottom: 'var(--spacing-xs)'
-        }}
-      >
+      <Heading level={1} margin="sm" color="primary">
         ThreadCub Dashboard
-      </h1>
+      </Heading>
       <p 
         style={{
-          fontSize: 'var(--font-size-md)',
+          fontSize: 'var(--font-size-base)',
           color: 'var(--color-text-secondary)'
         }}
       >
@@ -91,21 +85,22 @@ const DashboardContent = () => (
       </p>
     </div>
 
-    {/* Stats Cards */}
+   {/* Stats Cards - keep existing code */}
     <div 
-      className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
       style={{ 
-        gap: 'var(--spacing-lg)',
-        marginBottom: 'var(--spacing-xl)'
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: 'var(--spacing-6)',
+        marginBottom: 'var(--spacing-8)'
       }}
     >
       <div 
-        className="bg-white rounded-lg border p-6"
         style={{
-          backgroundColor: 'var(--color-background)',
+          backgroundColor: 'var(--color-white)',
           borderRadius: 'var(--border-radius-lg)',
           border: `1px solid var(--color-gray-200)`,
-          padding: 'var(--spacing-lg)'
+          padding: 'var(--spacing-6)',
+          boxShadow: 'var(--shadow-card)'
         }}
       >
         <h3 
@@ -113,7 +108,7 @@ const DashboardContent = () => (
             fontSize: 'var(--font-size-sm)',
             fontWeight: 'var(--font-weight-medium)',
             color: 'var(--color-text-secondary)',
-            marginBottom: 'var(--spacing-xs)'
+            marginBottom: 'var(--spacing-2)'
           }}
         >
           Conversations
@@ -122,7 +117,8 @@ const DashboardContent = () => (
           style={{
             fontSize: 'var(--font-size-2xl)',
             fontWeight: 'var(--font-weight-bold)',
-            color: 'var(--color-primary)'
+            color: 'var(--color-primary)',
+            margin: '0'
           }}
         >
           1
@@ -130,12 +126,12 @@ const DashboardContent = () => (
       </div>
 
       <div 
-        className="bg-white rounded-lg border p-6"
         style={{
-          backgroundColor: 'var(--color-background)',
+          backgroundColor: 'var(--color-white)',
           borderRadius: 'var(--border-radius-lg)',
           border: `1px solid var(--color-gray-200)`,
-          padding: 'var(--spacing-lg)'
+          padding: 'var(--spacing-6)',
+          boxShadow: 'var(--shadow-card)'
         }}
       >
         <h3 
@@ -143,7 +139,7 @@ const DashboardContent = () => (
             fontSize: 'var(--font-size-sm)',
             fontWeight: 'var(--font-weight-medium)',
             color: 'var(--color-text-secondary)',
-            marginBottom: 'var(--spacing-xs)'
+            marginBottom: 'var(--spacing-2)'
           }}
         >
           Total Messages
@@ -152,7 +148,8 @@ const DashboardContent = () => (
           style={{
             fontSize: 'var(--font-size-2xl)',
             fontWeight: 'var(--font-weight-bold)',
-            color: 'var(--color-success)'
+            color: 'var(--color-success)',
+            margin: '0'
           }}
         >
           12
@@ -160,12 +157,12 @@ const DashboardContent = () => (
       </div>
 
       <div 
-        className="bg-white rounded-lg border p-6"
         style={{
-          backgroundColor: 'var(--color-background)',
+          backgroundColor: 'var(--color-white)',
           borderRadius: 'var(--border-radius-lg)',
           border: `1px solid var(--color-gray-200)`,
-          padding: 'var(--spacing-lg)'
+          padding: 'var(--spacing-6)',
+          boxShadow: 'var(--shadow-card)'
         }}
       >
         <h3 
@@ -173,7 +170,7 @@ const DashboardContent = () => (
             fontSize: 'var(--font-size-sm)',
             fontWeight: 'var(--font-weight-medium)',
             color: 'var(--color-text-secondary)',
-            marginBottom: 'var(--spacing-xs)'
+            marginBottom: 'var(--spacing-2)'
           }}
         >
           AI Analyses
@@ -182,7 +179,8 @@ const DashboardContent = () => (
           style={{
             fontSize: 'var(--font-size-2xl)',
             fontWeight: 'var(--font-weight-bold)',
-            color: 'var(--color-secondary)'
+            color: 'var(--color-info)',
+            margin: '0'
           }}
         >
           0
@@ -192,34 +190,27 @@ const DashboardContent = () => (
 
     {/* Recent Conversations */}
     <div 
-      className="bg-white rounded-lg border"
       style={{
-        backgroundColor: 'var(--color-background)',
+        backgroundColor: 'var(--color-white)',
         borderRadius: 'var(--border-radius-lg)',
-        border: `1px solid var(--color-gray-200)`
+        border: `1px solid var(--color-gray-200)`,
+        boxShadow: 'var(--shadow-card)'
       }}
     >
       <div 
-        className="p-6 border-b"
         style={{
-          padding: 'var(--spacing-lg)',
+          padding: 'var(--spacing-6)',
           borderBottom: `1px solid var(--color-gray-200)`
         }}
       >
-        <h2 
-          style={{
-            fontSize: 'var(--font-size-lg)',
-            fontWeight: 'var(--font-weight-semibold)',
-            color: 'var(--color-text-primary)'
-          }}
-        >
+        <Heading level={2} margin="none" color="primary">
           Your Conversations
-        </h2>
+        </Heading>
         <p 
           style={{
             fontSize: 'var(--font-size-sm)',
             color: 'var(--color-text-secondary)',
-            marginTop: 'var(--spacing-xs)'
+            margin: 'var(--spacing-1) 0 0 0'
           }}
         >
           Click analyze to get AI-powered insights and next steps
@@ -227,32 +218,35 @@ const DashboardContent = () => (
       </div>
       
       <div 
-        className="p-6"
-        style={{ padding: 'var(--spacing-lg)' }}
+        style={{ padding: 'var(--spacing-6)' }}
       >
         <div 
-          className="flex items-center justify-between p-4 rounded-lg border"
           style={{
-            padding: 'var(--spacing-md)',
-            borderRadius: 'var(--border-radius-md)',
-            border: `1px solid var(--color-gray-200)`
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 'var(--spacing-4)',
+            borderRadius: 'var(--border-radius-lg)',
+            border: `1px solid var(--color-gray-200)`,
+            backgroundColor: 'var(--color-gray-50)'
           }}
         >
           <div>
             <h3 
               style={{
-                fontSize: 'var(--font-size-md)',
+                fontSize: 'var(--font-size-base)',
                 fontWeight: 'var(--font-weight-medium)',
                 color: 'var(--color-text-primary)',
-                marginBottom: 'var(--spacing-xs)'
+                margin: '0 0 var(--spacing-2) 0'
               }}
             >
               Google Gemini for Coding
             </h3>
             <div 
-              className="flex items-center gap-4 text-sm"
               style={{
-                gap: 'var(--spacing-md)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--spacing-4)',
                 fontSize: 'var(--font-size-sm)',
                 color: 'var(--color-text-secondary)'
               }}
@@ -264,45 +258,21 @@ const DashboardContent = () => (
           </div>
           
           <div 
-            className="flex items-center gap-2"
-            style={{ gap: 'var(--spacing-sm)' }}
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-2)' 
+            }}
           >
-            <button 
-              className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium"
-              style={{
-                padding: 'var(--spacing-sm) var(--spacing-md)',
-                backgroundColor: 'var(--color-secondary-50)',
-                color: 'var(--color-secondary)',
-                borderRadius: 'var(--border-radius-md)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-medium)',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              🔍 Analyze
-            </button>
-            <button 
-              className="px-4 py-2 bg-green-100 text-green-700 rounded-lg text-sm font-medium"
-              style={{
-                padding: 'var(--spacing-sm) var(--spacing-md)',
-                backgroundColor: 'var(--color-success-50)',
-                color: 'var(--color-success)',
-                borderRadius: 'var(--border-radius-md)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-medium)',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              📱 Continue
-            </button>
+            <Button variant="secondary" size="sm">Analyze</Button>
+            <Button variant="primary" size="sm">Continue</Button>
           </div>
         </div>
       </div>
     </div>
   </div>
 )
+
 
 // Default dashboard layout
 export const Dashboard: Story = {
@@ -334,61 +304,49 @@ export const ProjectsPage: Story = {
     user: sampleUser,
     defaultSidebarCollapsed: false,
     children: (
-      <div>
+      <div style={{ padding: 'var(--spacing-8) var(--spacing-6)' }}>
         <div 
-          className="flex items-center justify-between mb-6"
-          style={{ marginBottom: 'var(--spacing-lg)' }}
+          style={{ 
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 'var(--spacing-6)' 
+          }}
         >
           <div>
-            <h1 
-              style={{
-                fontSize: 'var(--font-size-2xl)',
-                fontWeight: 'var(--font-weight-bold)',
-                color: 'var(--color-text-primary)',
-                marginBottom: 'var(--spacing-xs)'
-              }}
-            >
+            <Heading level={1} margin="sm" color="primary">
               Your Projects
-            </h1>
+            </Heading>
             <p 
               style={{
-                fontSize: 'var(--font-size-md)',
-                color: 'var(--color-text-secondary)'
+                fontSize: 'var(--font-size-base)',
+                color: 'var(--color-text-secondary)',
+                margin: '0'
               }}
             >
               0 projects • 24 total conversations
             </p>
           </div>
-          <button 
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium"
-            style={{
-              padding: 'var(--spacing-sm) var(--spacing-md)',
-              backgroundColor: 'var(--color-primary)',
-              color: 'white',
-              borderRadius: 'var(--border-radius-md)',
-              fontWeight: 'var(--font-weight-medium)',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-          >
+          <Button variant="primary" size="md">
             + New Project
-          </button>
+          </Button>
         </div>
         
         <div 
-          className="bg-white rounded-lg border p-8 text-center"
           style={{
-            backgroundColor: 'var(--color-background)',
+            backgroundColor: 'var(--color-white)',
             borderRadius: 'var(--border-radius-lg)',
             border: `1px solid var(--color-gray-200)`,
-            padding: 'var(--spacing-xl)',
-            textAlign: 'center'
+            padding: 'var(--spacing-8)',
+            textAlign: 'center',
+            boxShadow: 'var(--shadow-card)'
           }}
         >
           <p 
             style={{
               fontSize: 'var(--font-size-lg)',
-              color: 'var(--color-text-secondary)'
+              color: 'var(--color-text-secondary)',
+              margin: '0'
             }}
           >
             No projects yet. Create your first project to organize your conversations.
@@ -398,6 +356,7 @@ export const ProjectsPage: Story = {
     )
   }
 }
+
 
 // Threads page layout
 export const ThreadsPage: Story = {
@@ -409,32 +368,25 @@ export const ThreadsPage: Story = {
     user: sampleUser,
     defaultSidebarCollapsed: false,
     children: (
-      <div>
+      <div style={{ padding: 'var(--spacing-8) var(--spacing-6)' }}>
         <div 
-          className="mb-6"
-          style={{ marginBottom: 'var(--spacing-lg)' }}
+          style={{ marginBottom: 'var(--spacing-6)' }}
         >
-          <h1 
-            style={{
-              fontSize: 'var(--font-size-2xl)',
-              fontWeight: 'var(--font-weight-bold)',
-              color: 'var(--color-text-primary)',
-              marginBottom: 'var(--spacing-xs)'
-            }}
-          >
+          <Heading level={1} margin="sm" color="primary">
             Threads
-          </h1>
+          </Heading>
           <p 
             style={{
-              fontSize: 'var(--font-size-md)',
-              color: 'var(--color-text-secondary)'
+              fontSize: 'var(--font-size-base)',
+              color: 'var(--color-text-secondary)',
+              margin: '0'
             }}
           >
             View and manage your conversation threads
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div style={{ display: 'grid', gap: 'var(--spacing-4)' }}>
           {[
             'Retrieving Conversation Context - Claude',
             'ThreadCub API Conversation Retrieval - Claude', 
@@ -442,30 +394,35 @@ export const ThreadsPage: Story = {
           ].map((title, index) => (
             <div 
               key={index}
-              className="bg-white rounded-lg border p-6"
               style={{
-                backgroundColor: 'var(--color-background)',
+                backgroundColor: 'var(--color-white)',
                 borderRadius: 'var(--border-radius-lg)',
                 border: `1px solid var(--color-gray-200)`,
-                padding: 'var(--spacing-lg)'
+                padding: 'var(--spacing-6)',
+                boxShadow: 'var(--shadow-card)'
               }}
             >
-              <div className="flex items-center justify-between">
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between' 
+              }}>
                 <div>
                   <h3 
                     style={{
-                      fontSize: 'var(--font-size-md)',
+                      fontSize: 'var(--font-size-base)',
                       fontWeight: 'var(--font-weight-medium)',
                       color: 'var(--color-text-primary)',
-                      marginBottom: 'var(--spacing-xs)'
+                      margin: '0 0 var(--spacing-2) 0'
                     }}
                   >
                     {title}
                   </h3>
                   <div 
-                    className="flex items-center gap-4 text-sm"
                     style={{
-                      gap: 'var(--spacing-md)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--spacing-4)',
                       fontSize: 'var(--font-size-sm)',
                       color: 'var(--color-text-secondary)'
                     }}
@@ -474,27 +431,61 @@ export const ThreadsPage: Story = {
                     <span>Aug 20, 2025, 04:56 PM</span>
                   </div>
                 </div>
-                <button 
-                  className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium"
-                  style={{
-                    padding: 'var(--spacing-sm) var(--spacing-md)',
-                    backgroundColor: 'var(--color-primary-50)',
-                    color: 'var(--color-primary)',
-                    borderRadius: 'var(--border-radius-md)',
-                    fontSize: 'var(--font-size-sm)',
-                    fontWeight: 'var(--font-weight-medium)',
-                    border: 'none',
-                    cursor: 'pointer'
-                  }}
-                >
+                <Button variant="primary" size="sm">
                   View Details
-                </button>
+                </Button>
               </div>
             </div>
           ))}
         </div>
       </div>
     )
+  }
+}
+
+// Full width demonstration
+export const FullWidthDemo: Story = {
+  args: {
+    navItems,
+    user: sampleUser,
+    defaultSidebarCollapsed: false,
+    children: (
+      <div>
+        {/* Full width banner */}
+        <div 
+          style={{
+            backgroundColor: 'var(--color-primary)',
+            color: 'var(--color-white)',
+            padding: 'var(--spacing-4) var(--spacing-6)',
+            marginBottom: 'var(--spacing-6)'
+          }}
+        >
+          <h2 style={{ margin: '0', fontSize: 'var(--font-size-lg)' }}>
+            Full Width Banner - Extends to edges
+          </h2>
+          <p style={{ margin: '0', fontSize: 'var(--font-size-sm)', opacity: 0.9 }}>
+            This demonstrates how content can now extend to the full width of the available space
+          </p>
+        </div>
+        
+        {/* Content with padding */}
+        <div style={{ padding: '0 var(--spacing-6) var(--spacing-8)' }}>
+          <h1 style={{ fontSize: 'var(--font-size-2xl)', marginBottom: 'var(--spacing-4)' }}>
+            Full Width Layout Demo
+          </h1>
+          <p style={{ fontSize: 'var(--font-size-base)', color: 'var(--color-text-secondary)' }}>
+            The layout now supports full-width content while individual components can add their own padding as needed.
+          </p>
+        </div>
+      </div>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates the full-width layout capability where content can extend to screen edges or add its own padding as needed.'
+      }
+    }
   }
 }
 

@@ -11,7 +11,7 @@ const meta: Meta<typeof Alert> = {
     docs: {
       description: {
         component:
-          'Alert component for displaying important messages with different severity levels. Supports multiple sizes and optional dismissal functionality.'
+          'Alert component for displaying important messages with different severity levels. Supports multiple sizes, optional titles, and dismissal functionality.'
       }
     }
   },
@@ -26,6 +26,10 @@ const meta: Meta<typeof Alert> = {
       options: ['sm', 'md', 'lg'],
       description: 'Visual size of the alert',
       table: { defaultValue: { summary: 'md' } }
+    },
+    title: {
+      control: { type: 'text' },
+      description: 'Optional title displayed above the main content'
     },
     dismissible: {
       control: { type: 'boolean' },
@@ -100,6 +104,31 @@ export const LargeSize: Story = {
     size: 'lg',
     children: 'This is a large alert with more prominence and spacing.',
     onClose: () => console.log('Large alert closed')
+  }
+}
+
+// Title variants
+export const WithTitle: Story = {
+  args: {
+    type: 'success',
+    title: 'Success!',
+    children: 'Your account has been created successfully!'
+  }
+}
+
+export const WithTitleAndRichContent: Story = {
+  args: {
+    type: 'warning',
+    title: 'Important Notice',
+    children: (
+      <div>
+        Your session will expire in 5 minutes. Please save your work and{' '}
+        <a href="#" style={{ color: 'inherit', textDecoration: 'underline' }}>
+          extend your session
+        </a>{' '}
+        if needed.
+      </div>
+    )
   }
 }
 
@@ -228,6 +257,49 @@ export const AllTypes: Story = {
   }
 }
 
+// Title and size combinations
+export const AllTitleSizes: Story = {
+  render: () => (
+    <div style={{ 
+      display: 'grid', 
+      gap: 'var(--spacing-4)',
+      maxWidth: '600px'
+    }}>
+      <Alert 
+        type="success" 
+        size="sm" 
+        title="Small Success"
+        onClose={() => console.log('Small with title closed')}
+      >
+        Compact alert with title for tight spaces
+      </Alert>
+      <Alert 
+        type="info" 
+        size="md" 
+        title="Medium Info"
+        onClose={() => console.log('Medium with title closed')}
+      >
+        Default size alert with title for most use cases
+      </Alert>
+      <Alert 
+        type="warning" 
+        size="lg" 
+        title="Large Warning"
+        onClose={() => console.log('Large with title closed')}
+      >
+        Prominent large alert with title for important messages
+      </Alert>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Comparison of all alert sizes with titles showing typography hierarchy.'
+      }
+    }
+  }
+}
+
 // Real-world usage example
 export const InAuthForm: Story = {
   render: () => (
@@ -257,6 +329,7 @@ export const InAuthForm: Story = {
       <Alert 
         type="error" 
         size="sm" 
+        title="Login Failed"
         onClose={() => console.log('Auth error dismissed')}
         style={{ marginBottom: 'var(--spacing-4)' }}
       >
@@ -318,7 +391,7 @@ export const InAuthForm: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates how the small alert fits naturally within an authentication form context using design tokens.'
+        story: 'Demonstrates how the alert with title fits naturally within an authentication form context.'
       }
     }
   }
