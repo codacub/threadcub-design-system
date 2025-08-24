@@ -1,6 +1,6 @@
-// stories/Badge.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react'
 import { Badge } from '../components/Badge'
+import { Info as InfoIcon, CheckCircle, XCircle, AlertTriangle, Zap } from 'lucide-react'
 import '../styles/tokens.css'
 
 const meta: Meta<typeof Badge> = {
@@ -11,14 +11,38 @@ const meta: Meta<typeof Badge> = {
     docs: {
       description: {
         component:
-          'Badge component for displaying notification counts. Supports pill shape for expanded view and dot indicator for collapsed view. Perfect for navigation items, notifications, and status indicators.'
+          'Badge component for displaying labels, status indicators, and notification counts. Supports various visual variants, icons, and sizes following Lightning Design System patterns.'
       }
     }
   },
   argTypes: {
+    children: {
+      control: { type: 'text' },
+      description: 'Badge text content'
+    },
     count: {
       control: { type: 'number', min: 0, max: 999 },
-      description: 'The number to display in the badge'
+      description: 'The number to display in the badge (legacy prop)'
+    },
+    variant: {
+      control: { type: 'select' },
+      options: ['base', 'inverse', 'light', 'info', 'success', 'warning', 'error'],
+      description: 'Visual variant of the badge',
+      table: { defaultValue: { summary: 'base' } }
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg'],
+      description: 'Size variant for different use cases',
+      table: { defaultValue: { summary: 'md' } }
+    },
+    icon: {
+      control: false,
+      description: 'Icon to display on the left side'
+    },
+    iconRight: {
+      control: false,
+      description: 'Icon to display on the right side'
     },
     collapsed: {
       control: { type: 'boolean' },
@@ -27,18 +51,8 @@ const meta: Meta<typeof Badge> = {
     },
     active: {
       control: { type: 'boolean' },
-      description: 'Whether the parent item is active (affects badge color)',
+      description: 'Whether the parent item is active (affects base variant styling)',
       table: { defaultValue: { summary: 'false' } }
-    },
-    size: {
-      control: { type: 'select' },
-      options: ['sm', 'md', 'lg'],
-      description: 'Size variant for different use cases',
-      table: { defaultValue: { summary: 'md' } }
-    },
-    className: {
-      control: { type: 'text' },
-      description: 'Additional CSS class names'
     }
   },
   tags: ['autodocs']
@@ -47,56 +61,109 @@ const meta: Meta<typeof Badge> = {
 export default meta
 type Story = StoryObj<typeof Badge>
 
-// Basic examples
-export const Default: Story = {
+// Base examples (matching Lightning DS structure)
+export const Base: Story = {
   args: {
-    count: 5,
-    size: 'md'
+    children: 'Badge Label'
   }
 }
 
-export const HighCount: Story = {
+export const BaseWithLeftIcon: Story = {
   args: {
-    count: 42,
-    size: 'md'
+    children: 'Badge Label',
+    icon: <InfoIcon size={12} />
   }
 }
 
-export const MaxCount: Story = {
+export const BaseWithRightIcon: Story = {
   args: {
-    count: 150,
-    size: 'md'
+    children: 'Badge Label',
+    iconRight: <InfoIcon size={12} />
   }
 }
 
-export const SingleDigit: Story = {
+// Inverse variant
+export const Inverse: Story = {
   args: {
-    count: 3,
-    size: 'md'
+    children: 'Darker Badge',
+    variant: 'inverse'
+  }
+}
+
+// Light variant
+export const Light: Story = {
+  args: {
+    children: 'Lightest Badge',
+    variant: 'light',
+    icon: <Zap size={12} />
+  }
+}
+
+// Info variant
+export const InfoBadge: Story = {
+  args: {
+    children: 'Info Badge',
+    variant: 'info',
+    icon: <InfoIcon size={12} />
+  }
+}
+
+// Success variant
+export const Success: Story = {
+  args: {
+    children: 'Success Badge',
+    variant: 'success',
+    icon: <CheckCircle size={12} />
+  }
+}
+
+// Error variant
+export const Error: Story = {
+  args: {
+    children: 'Error Badge',
+    variant: 'error',
+    icon: <XCircle size={12} />
+  }
+}
+
+// Warning variant
+export const Warning: Story = {
+  args: {
+    children: 'Warning Badge',
+    variant: 'warning',
+    icon: <AlertTriangle size={12} />
   }
 }
 
 // Size variants
 export const SmallSize: Story = {
   args: {
-    count: 8,
-    size: 'sm'
+    children: 'Small',
+    size: 'sm',
+    variant: 'info'
   }
 }
 
 export const LargeSize: Story = {
   args: {
-    count: 12,
-    size: 'lg'
+    children: 'Large',
+    size: 'lg',
+    variant: 'success'
   }
 }
 
-// Active state
-export const ActiveState: Story = {
+// Legacy count support (backwards compatibility)
+export const CountBadge: Story = {
   args: {
-    count: 7,
-    size: 'md',
-    active: true
+    count: 42,
+    variant: 'error'
+  }
+}
+
+export const HighCountBadge: Story = {
+  args: {
+    count: 150,
+    variant: 'info'
   }
 }
 
@@ -104,8 +171,7 @@ export const ActiveState: Story = {
 export const CollapsedDot: Story = {
   args: {
     count: 5,
-    collapsed: true,
-    size: 'md'
+    collapsed: true
   },
   render: (args) => (
     <div style={{ 
@@ -118,7 +184,6 @@ export const CollapsedDot: Story = {
       alignItems: 'center',
       justifyContent: 'center'
     }}>
-      {/* Simulated icon */}
       <div style={{
         width: '24px',
         height: '24px',
@@ -127,224 +192,149 @@ export const CollapsedDot: Story = {
       }} />
       <Badge {...args} />
     </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Collapsed badges show as small dots, typically used in sidebar navigation.'
-      }
-    }
-  }
+  )
 }
 
-// All sizes comparison
-export const AllSizes: Story = {
+// All variants showcase
+export const AllVariants: Story = {
   render: () => (
     <div style={{ 
-      display: 'flex', 
+      display: 'grid',
       gap: 'var(--spacing-4)',
-      alignItems: 'center'
-    }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-        <Badge count={5} size="sm" />
-        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)' }}>Small</span>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-        <Badge count={5} size="md" />
-        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)' }}>Medium</span>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-        <Badge count={5} size="lg" />
-        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)' }}>Large</span>
-      </div>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Comparison of all available badge sizes.'
-      }
-    }
-  }
-}
-
-// Active vs inactive comparison
-export const ActiveComparison: Story = {
-  render: () => (
-    <div style={{ 
-      display: 'flex', 
-      gap: 'var(--spacing-4)',
-      alignItems: 'center'
-    }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-        <Badge count={8} active={false} />
-        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)' }}>Inactive</span>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-        <Badge count={8} active={true} />
-        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)' }}>Active</span>
-      </div>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Active badges use primary color, inactive badges use error color.'
-      }
-    }
-  }
-}
-
-// Navigation context example
-export const InNavigation: Story = {
-  render: () => (
-    <div style={{
-      width: '280px',
-      backgroundColor: 'var(--color-white)',
-      border: 'var(--border-width-thin) solid var(--color-border)',
-      borderRadius: 'var(--border-radius-xl)',
-      padding: 'var(--spacing-4)',
       fontFamily: 'var(--font-family-primary)'
     }}>
-      <h4 style={{ 
-        margin: '0 0 var(--spacing-4) 0',
-        fontSize: 'var(--font-size-lg)',
-        fontWeight: 'var(--font-weight-semibold)',
-        color: 'var(--color-gray-900)'
-      }}>
-        Navigation Example
-      </h4>
+      <div>
+        <h4 style={{ 
+          margin: '0 0 var(--spacing-2) 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-700)'
+        }}>
+          Text Badges
+        </h4>
+        <div style={{ display: 'flex', gap: 'var(--spacing-2)', flexWrap: 'wrap' }}>
+          <Badge variant="base">Base</Badge>
+          <Badge variant="inverse">Inverse</Badge>
+          <Badge variant="light" icon={<Zap size={12} />}>Light</Badge>
+          <Badge variant="info" icon={<InfoIcon size={12} />}>Info</Badge>
+          <Badge variant="success" icon={<CheckCircle size={12} />}>Success</Badge>
+          <Badge variant="warning" icon={<AlertTriangle size={12} />}>Warning</Badge>
+          <Badge variant="error" icon={<XCircle size={12} />}>Error</Badge>
+        </div>
+      </div>
       
-      <div style={{ display: 'grid', gap: 'var(--spacing-2)' }}>
-        {/* Active nav item */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'var(--spacing-3)',
-          backgroundColor: 'var(--color-primary-bg)',
-          color: 'var(--color-primary-text)',
-          borderRadius: 'var(--border-radius-lg)',
+      <div>
+        <h4 style={{ 
+          margin: '0 0 var(--spacing-2) 0',
           fontSize: 'var(--font-size-sm)',
-          fontWeight: 'var(--font-weight-medium)'
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-700)'
         }}>
-          <span>Messages</span>
-          <Badge count={24} active={true} size="sm" />
+          Count Badges (Legacy)
+        </h4>
+        <div style={{ display: 'flex', gap: 'var(--spacing-2)', flexWrap: 'wrap', alignItems: 'center' }}>
+          <Badge count={5} variant="base" />
+          <Badge count={42} variant="info" />
+          <Badge count={99} variant="success" />
+          <Badge count={150} variant="error" />
         </div>
-        
-        {/* Inactive nav items */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'var(--spacing-3)',
-          color: 'var(--color-gray-600)',
-          borderRadius: 'var(--border-radius-lg)',
+      </div>
+
+      <div>
+        <h4 style={{ 
+          margin: '0 0 var(--spacing-2) 0',
           fontSize: 'var(--font-size-sm)',
-          fontWeight: 'var(--font-weight-medium)'
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-700)'
         }}>
-          <span>Notifications</span>
-          <Badge count={7} active={false} size="sm" />
-        </div>
-        
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'var(--spacing-3)',
-          color: 'var(--color-gray-600)',
-          borderRadius: 'var(--border-radius-lg)',
-          fontSize: 'var(--font-size-sm)',
-          fontWeight: 'var(--font-weight-medium)'
-        }}>
-          <span>Tasks</span>
-          <Badge count={156} active={false} size="sm" />
+          Sizes
+        </h4>
+        <div style={{ display: 'flex', gap: 'var(--spacing-2)', alignItems: 'center' }}>
+          <Badge size="sm" variant="info">Small</Badge>
+          <Badge size="md" variant="info">Medium</Badge>
+          <Badge size="lg" variant="info">Large</Badge>
         </div>
       </div>
     </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Real-world example showing badges in a navigation context with active and inactive states.'
-      }
-    }
-  }
+  )
 }
 
-// Collapsed navigation example
-export const CollapsedNavigation: Story = {
+// Real-world usage examples
+export const StatusIndicators: Story = {
   render: () => (
     <div style={{
-      width: '64px',
+      display: 'grid',
+      gap: 'var(--spacing-3)',
+      padding: 'var(--spacing-4)',
       backgroundColor: 'var(--color-white)',
       border: 'var(--border-width-thin) solid var(--color-border)',
-      borderRadius: 'var(--border-radius-xl)',
-      padding: 'var(--spacing-2)',
+      borderRadius: 'var(--border-radius-lg)',
       fontFamily: 'var(--font-family-primary)'
     }}>
-      <div style={{ display: 'grid', gap: 'var(--spacing-2)' }}>
-        {/* Simulated nav items with dot badges */}
-        <div style={{
-          position: 'relative',
-          height: 'var(--min-touch-target)',
-          backgroundColor: 'var(--color-primary-bg)',
-          borderRadius: 'var(--border-radius-lg)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
+        <span style={{ fontSize: 'var(--font-size-sm)' }}>System Status:</span>
+        <Badge variant="success" icon={<CheckCircle size={12} />}>Online</Badge>
+      </div>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
+        <span style={{ fontSize: 'var(--font-size-sm)' }}>Build Status:</span>
+        <Badge variant="warning" icon={<AlertTriangle size={12} />}>Pending</Badge>
+      </div>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
+        <span style={{ fontSize: 'var(--font-size-sm)' }}>API Status:</span>
+        <Badge variant="error" icon={<XCircle size={12} />}>Error</Badge>
+      </div>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
+        <span style={{ fontSize: 'var(--font-size-sm)' }}>Environment:</span>
+        <Badge variant="light">Development</Badge>
+      </div>
+    </div>
+  )
+}
+
+// Platform/Topic tags (like ConversationCard usage)
+export const PlatformTags: Story = {
+  render: () => (
+    <div style={{
+      display: 'grid',
+      gap: 'var(--spacing-4)',
+      fontFamily: 'var(--font-family-primary)'
+    }}>
+      <div>
+        <h4 style={{ 
+          margin: '0 0 var(--spacing-2) 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-700)'
         }}>
-          {/* Icon placeholder */}
-          <div style={{
-            width: '20px',
-            height: '20px',
-            backgroundColor: 'var(--color-primary-text)',
-            borderRadius: 'var(--border-radius-base)'
-          }} />
-          <Badge count={24} collapsed={true} />
+          AI Platforms
+        </h4>
+        <div style={{ display: 'flex', gap: 'var(--spacing-2)', flexWrap: 'wrap' }}>
+          <Badge variant="info">Claude</Badge>
+          <Badge variant="success">ChatGPT</Badge>
+          <Badge variant="warning">Copilot</Badge>
+          <Badge variant="light">Gemini</Badge>
         </div>
-        
-        <div style={{
-          position: 'relative',
-          height: 'var(--min-touch-target)',
-          borderRadius: 'var(--border-radius-lg)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
+      </div>
+      
+      <div>
+        <h4 style={{ 
+          margin: '0 0 var(--spacing-2) 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-700)'
         }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            backgroundColor: 'var(--color-gray-400)',
-            borderRadius: 'var(--border-radius-base)'
-          }} />
-          <Badge count={7} collapsed={true} />
-        </div>
-        
-        <div style={{
-          position: 'relative',
-          height: 'var(--min-touch-target)',
-          borderRadius: 'var(--border-radius-lg)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            backgroundColor: 'var(--color-gray-400)',
-            borderRadius: 'var(--border-radius-base)'
-          }} />
-          <Badge count={156} collapsed={true} />
+          Topic Tags
+        </h4>
+        <div style={{ display: 'flex', gap: 'var(--spacing-2)', flexWrap: 'wrap' }}>
+          <Badge variant="base">Authentication</Badge>
+          <Badge variant="base">Mobile App</Badge>
+          <Badge variant="base">Database</Badge>
+          <Badge variant="base">Performance</Badge>
         </div>
       </div>
     </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Example of badges in a collapsed navigation sidebar, showing as notification dots.'
-      }
-    }
-  }
+  )
 }

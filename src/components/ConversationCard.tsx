@@ -1,11 +1,14 @@
 // src/components/ConversationCard.tsx
 import React from 'react'
 import { Button } from './Button'
+import { Heading } from './Heading'
+import { Badge } from './Badge'
+import { Search, MessageCircle, ClipboardList, Play, EyeOff } from 'lucide-react'
 
 export interface ConversationData {
   id: string
   title: string
-  platform: string
+  platform: string // This could be 'claude', 'chatgpt', 'copilot', etc.
   message_count: number
   created_at: string
   user_id: string | null
@@ -31,6 +34,8 @@ export interface ConversationCardProps {
   showAnalysis?: boolean
   /** Whether user is on waitlist (affects button availability) */
   isPending?: boolean
+  /** Whether to show icons in buttons */
+  showButtonIcons?: boolean
   /** Analyze button handler */
   onAnalyze?: (conversation: ConversationData) => void
   /** Deep dive button handler */
@@ -51,6 +56,7 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
   isAnalyzing = false,
   showAnalysis = false,
   isPending = false,
+  showButtonIcons = false,
   onAnalyze,
   onDeepDive,
   onActionPlan,
@@ -75,15 +81,6 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
     gap: 'var(--spacing-4)'
   }
 
-  const titleStyles: React.CSSProperties = {
-    fontSize: 'var(--font-size-base)',
-    fontWeight: 'var(--font-weight-medium)',
-    color: 'var(--color-gray-900)',
-    marginBottom: 'var(--spacing-2)',
-    lineHeight: 'var(--line-height-normal)',
-    margin: 0
-  }
-
   const metaStyles: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -92,16 +89,6 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
     color: 'var(--color-gray-500)',
     marginBottom: 'var(--spacing-3)',
     flexWrap: 'wrap' as const
-  }
-
-  const platformBadgeStyles: React.CSSProperties = {
-    backgroundColor: 'var(--color-gray-100)',
-    color: 'var(--color-gray-700)',
-    padding: 'var(--spacing-1) var(--spacing-2)',
-    borderRadius: 'var(--border-radius-base)',
-    fontSize: 'var(--font-size-xs)',
-    fontWeight: 'var(--font-weight-medium)',
-    textTransform: 'capitalize' as const
   }
 
   const actionButtonsStyles: React.CSSProperties = {
@@ -129,32 +116,11 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
     marginBottom: 'var(--spacing-3)'
   }
 
-  const analysisTitleStyles: React.CSSProperties = {
-    fontSize: 'var(--font-size-sm)',
-    fontWeight: 'var(--font-weight-semibold)',
-    color: 'var(--color-primary-dark)',
-    marginBottom: 'var(--spacing-2)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 'var(--spacing-1)'
-  }
-
   const analysisTextStyles: React.CSSProperties = {
     fontSize: 'var(--font-size-sm)',
     color: 'var(--color-gray-700)',
     lineHeight: 'var(--line-height-normal)',
     margin: 0
-  }
-
-  const topicTagStyles: React.CSSProperties = {
-    display: 'inline-block',
-    backgroundColor: 'var(--color-white)',
-    color: 'var(--color-primary)',
-    padding: 'var(--spacing-1) var(--spacing-2)',
-    borderRadius: 'var(--border-radius-full)',
-    border: `var(--border-width-thin) solid var(--color-primary-light)`,
-    fontSize: 'var(--font-size-xs)',
-    margin: 'var(--spacing-1) var(--spacing-1) 0 0'
   }
 
   const progressBarStyles: React.CSSProperties = {
@@ -192,6 +158,50 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
     return new Date(dateString).toLocaleDateString()
   }
 
+  // Get platform/AI service variant for consistent color coding
+  const getPlatformVariant = (platform: string) => {
+      switch (platform.toLowerCase()) {
+      case 'claude':
+      case 'anthropic':
+        return 'info'    // Badge variant
+      case 'chatgpt':
+      case 'openai':
+        return 'success' // Badge variant
+      case 'copilot':
+      case 'github':
+        return 'base'    // Badge variant
+      case 'gemini':
+      case 'google':
+        return 'warning' // Badge variant
+      default:
+        return 'base'
+    }
+  }
+
+  // Determine which icon and text to use for the analyze button
+  const getAnalyzeButtonProps = () => {
+    if (isAnalyzing) {
+      return {
+        children: 'Analyzing...',
+        icon: undefined // Loading spinner will show instead
+      }
+    }
+    
+    if (showAnalysis) {
+      return {
+        children: 'Hide Analysis',
+        icon: showButtonIcons ? <EyeOff /> : undefined
+      }
+    }
+    
+    return {
+      children: 'Analyze',
+      icon: showButtonIcons ? <Search /> : undefined
+    }
+  }
+
+  const analyzeButtonProps = getAnalyzeButtonProps()
+
   return (
     <div
       className={className}
@@ -201,14 +211,26 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
     >
       <div style={headerStyles}>
         <div style={{ flex: 1 }}>
-          <h3 style={titleStyles}>
+          <Heading 
+            level={3} 
+            margin="none"
+            style={{ 
+              fontSize: 'var(--font-size-base)',
+              fontWeight: 'var(--font-weight-medium)',
+              marginBottom: 'var(--spacing-2)',
+              color: 'inherit'
+            }}
+          >
             {conversation.title}
-          </h3>
+          </Heading>
           
           <div style={metaStyles}>
-            <span style={platformBadgeStyles}>
+            <Badge 
+              variant={getPlatformVariant(conversation.platform)}
+              size="md"
+            >
               {conversation.platform}
-            </span>
+            </Badge>
             <span>{conversation.message_count} messages</span>
             <span>{formatDate(conversation.created_at)}</span>
           </div>
@@ -219,22 +241,46 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
               <div style={analysisGridStyles}>
                 <div>
                   <div style={analysisSectionStyles}>
-                    <h4 style={analysisTitleStyles}>
+                    <Heading 
+                      level={4} 
+                      margin="none"
+                      style={{
+                        fontSize: 'var(--font-size-sm)',
+                        fontWeight: 'var(--font-weight-semibold)',
+                        color: 'var(--color-primary-dark)',
+                        marginBottom: 'var(--spacing-2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'var(--spacing-1)'
+                      }}
+                    >
                       📊 Summary
-                    </h4>
+                    </Heading>
                     <p style={analysisTextStyles}>{analysis.summary}</p>
                   </div>
 
                   {analysis.keyTopics.length > 0 && (
                     <div style={analysisSectionStyles}>
-                      <h4 style={analysisTitleStyles}>
-                        🏷️ Key Topics
-                      </h4>
-                      <div>
-                        {analysis.keyTopics.map((topic, i) => (
-                          <span key={i} style={topicTagStyles}>
-                            {topic}
-                          </span>
+                      <Heading 
+                        level={4} 
+                        margin="none"
+                        style={{
+                          fontSize: 'var(--font-size-sm)',
+                          fontWeight: 'var(--font-weight-semibold)',
+                          color: 'var(--color-primary-dark)',
+                          marginBottom: 'var(--spacing-2)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 'var(--spacing-1)'
+                        }}
+                      >
+                        Key Topics
+                      </Heading>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-1)' }}>
+                        {analysis.keyTopics.map((topic) => (
+                          <Badge variant="base" size="sm">
+                          {topic}
+                        </Badge>
                         ))}
                       </div>
                     </div>
@@ -244,9 +290,21 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
                 <div>
                   {analysis.nextSteps.length > 0 && (
                     <div style={analysisSectionStyles}>
-                      <h4 style={analysisTitleStyles}>
-                        🎯 Next Steps
-                      </h4>
+                      <Heading 
+                        level={4} 
+                        margin="none"
+                        style={{
+                          fontSize: 'var(--font-size-sm)',
+                          fontWeight: 'var(--font-weight-semibold)',
+                          color: 'var(--color-primary-dark)',
+                          marginBottom: 'var(--spacing-2)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 'var(--spacing-1)'
+                        }}
+                      >
+                        Next Steps
+                      </Heading>
                       <ul style={{ 
                         margin: 0, 
                         paddingLeft: 'var(--spacing-4)',
@@ -262,9 +320,21 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
                   )}
 
                   <div style={analysisSectionStyles}>
-                    <h4 style={analysisTitleStyles}>
-                      📈 Progress
-                    </h4>
+                    <Heading 
+                      level={4} 
+                      margin="none"
+                      style={{
+                        fontSize: 'var(--font-size-sm)',
+                        fontWeight: 'var(--font-weight-semibold)',
+                        color: 'var(--color-primary-dark)',
+                        marginBottom: 'var(--spacing-2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'var(--spacing-1)'
+                      }}
+                    >
+                      Progress
+                    </Heading>
                     <div style={progressBarStyles}>
                       <div style={progressFillStyles} />
                     </div>
@@ -280,9 +350,21 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
 
               {analysis.openQuestions.length > 0 && (
                 <div style={openQuestionsStyles}>
-                  <h4 style={analysisTitleStyles}>
-                    ❓ Open Questions
-                  </h4>
+                  <Heading 
+                    level={4} 
+                    margin="none"
+                    style={{
+                      fontSize: 'var(--font-size-sm)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                      color: 'var(--color-primary-dark)',
+                      marginBottom: 'var(--spacing-2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--spacing-1)'
+                    }}
+                  >
+                    Open Questions
+                  </Heading>
                   <ul style={{ 
                     margin: 0, 
                     paddingLeft: 'var(--spacing-4)',
@@ -305,11 +387,12 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
           <Button
             variant="secondary"
             size="sm"
+            icon={analyzeButtonProps.icon}
             onClick={() => onAnalyze?.(conversation)}
             disabled={isAnalyzing}
             loading={isAnalyzing}
           >
-            {isAnalyzing ? 'Analyzing...' : showAnalysis ? '🔽 Hide Analysis' : '🔍 Analyze'}
+            {analyzeButtonProps.children}
           </Button>
 
           {analysis && (
@@ -317,19 +400,21 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
               <Button
                 variant="secondary"
                 size="sm"
+                icon={showButtonIcons ? <MessageCircle /> : undefined}
                 onClick={() => onDeepDive?.(conversation)}
                 disabled={isPending}
               >
-                💬 Deep Dive
+                Deep Dive
               </Button>
 
               <Button
                 variant="secondary"
                 size="sm"
+                icon={showButtonIcons ? <ClipboardList /> : undefined}
                 onClick={() => onActionPlan?.(conversation)}
                 disabled={isPending}
               >
-                📋 Action Plan
+                Action Plan
               </Button>
             </>
           )}
@@ -337,9 +422,10 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
           <Button
             variant="primary"
             size="sm"
+            icon={showButtonIcons ? <Play /> : undefined}
             onClick={() => onContinue?.(conversation)}
           >
-            🔄 Continue
+            Continue
           </Button>
         </div>
       </div>

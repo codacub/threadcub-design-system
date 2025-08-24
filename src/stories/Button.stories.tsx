@@ -1,6 +1,7 @@
 // stories/Button.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react'
 import { Button } from '../components/Button'
+import { Plus, Download, ArrowRight, Search, ChevronDown } from 'lucide-react'
 import '../styles/tokens.css'
 
 const meta: Meta<typeof Button> = {
@@ -11,7 +12,7 @@ const meta: Meta<typeof Button> = {
     docs: {
       description: {
         component:
-          'Button component with three variants (primary, secondary, tertiary) and three sizes (sm, md, lg). Includes proper hover, focus, disabled, and loading states using design tokens.'
+          'Button component with three variants (primary, secondary, tertiary) and three sizes (sm, md, lg). Includes proper hover, focus, disabled, and loading states using design tokens. Supports Lucide React icons with left/right positioning.'
       }
     }
   },
@@ -52,7 +53,27 @@ const meta: Meta<typeof Button> = {
     onClick: {
       action: 'clicked',
       description: 'Click event handler'
+    },
+    icon: {
+      control: false,
+      description: 'Icon component (Lucide React icon) - Use stories to see examples'
+    },
+    iconPosition: {
+      control: { type: 'select' },
+      options: ['left', 'right'],
+      description: 'Position of the icon relative to text',
+      table: { defaultValue: { summary: 'left' } }
     }
+  },
+  // Add default args for better control interaction
+  args: {
+    variant: 'primary',
+    size: 'md',
+    disabled: false,
+    loading: false,
+    type: 'button',
+    children: 'Button',
+    iconPosition: 'left'
   }
 }
 
@@ -139,17 +160,21 @@ export const LoadingTertiary: Story = {
   }
 }
 
-export const WithIcon: Story = {
+// Icon variants
+export const WithIconLeft: Story = {
   args: {
     variant: 'primary',
-    children: (
-      <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 5v14M5 12h14"/>
-        </svg>
-        Add Item
-      </span>
-    )
+    icon: <Plus />,
+    children: 'Add Item'
+  }
+}
+
+export const WithIconRight: Story = {
+  args: {
+    variant: 'primary',
+    icon: <ArrowRight />,
+    iconPosition: 'right',
+    children: 'Continue'
   }
 }
 
@@ -222,19 +247,12 @@ export const AllVariants: Story = {
               color: 'var(--color-gray-700)',
               margin: 0
             }}>
-              Hover
+              With Icons
             </h4>
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: 'var(--spacing-3)', 
-              marginTop: 'var(--spacing-3)',
-              fontSize: 'var(--font-size-sm)', 
-              color: 'var(--color-gray-500)',
-              fontStyle: 'italic'
-            }}>
-              <div>Hover over buttons →</div>
-              <div>to see hover states</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)', marginTop: 'var(--spacing-3)' }}>
+              <Button variant="primary" icon={<Plus />}>Add</Button>
+              <Button variant="secondary" icon={<Download />}>Download</Button>
+              <Button variant="tertiary" icon={<Search />}>Search</Button>
             </div>
           </div>
           
@@ -246,19 +264,12 @@ export const AllVariants: Story = {
               color: 'var(--color-gray-700)',
               margin: 0
             }}>
-              Focus
+              Icon Right
             </h4>
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: 'var(--spacing-3)', 
-              marginTop: 'var(--spacing-3)',
-              fontSize: 'var(--font-size-sm)', 
-              color: 'var(--color-gray-500)',
-              fontStyle: 'italic'
-            }}>
-              <div>Tab to focus →</div>
-              <div>or click to see focus</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)', marginTop: 'var(--spacing-3)' }}>
+              <Button variant="primary" icon={<ArrowRight />} iconPosition="right">Next</Button>
+              <Button variant="secondary" icon={<ChevronDown />} iconPosition="right">More</Button>
+              <Button variant="tertiary" icon={<ArrowRight />} iconPosition="right">View</Button>
             </div>
           </div>
           
@@ -281,7 +292,7 @@ export const AllVariants: Story = {
         </div>
       </div>
 
-      {/* Button Sizes */}
+      {/* Button Sizes with Icons */}
       <div>
         <h3 style={{ 
           marginBottom: 'var(--spacing-4)', 
@@ -290,7 +301,7 @@ export const AllVariants: Story = {
           color: 'var(--color-gray-900)',
           margin: 0
         }}>
-          Button Sizes
+          Button Sizes with Icons
         </h3>
         <div style={{ 
           display: 'grid', 
@@ -310,9 +321,9 @@ export const AllVariants: Story = {
               Small (36px)
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)', marginTop: 'var(--spacing-3)' }}>
-              <Button variant="primary" size="sm">Small primary</Button>
-              <Button variant="secondary" size="sm">Small secondary</Button>
-              <Button variant="tertiary" size="sm">Small tertiary</Button>
+              <Button variant="primary" size="sm" icon={<Plus />}>Add</Button>
+              <Button variant="secondary" size="sm" icon={<Download />}>Download</Button>
+              <Button variant="tertiary" size="sm" icon={<ArrowRight />} iconPosition="right">Next</Button>
             </div>
           </div>
           
@@ -327,9 +338,9 @@ export const AllVariants: Story = {
               Medium (40px)
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)', marginTop: 'var(--spacing-3)' }}>
-              <Button variant="primary" size="md">Medium primary</Button>
-              <Button variant="secondary" size="md">Medium secondary</Button>
-              <Button variant="tertiary" size="md">Medium tertiary</Button>
+              <Button variant="primary" size="md" icon={<Plus />}>Add</Button>
+              <Button variant="secondary" size="md" icon={<Download />}>Download</Button>
+              <Button variant="tertiary" size="md" icon={<ArrowRight />} iconPosition="right">Next</Button>
             </div>
           </div>
           
@@ -344,11 +355,44 @@ export const AllVariants: Story = {
               Large (44px)
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)', marginTop: 'var(--spacing-3)' }}>
-              <Button variant="primary" size="lg">Large primary</Button>
-              <Button variant="secondary" size="lg">Large secondary</Button>
-              <Button variant="tertiary" size="lg">Large tertiary</Button>
+              <Button variant="primary" size="lg" icon={<Plus />}>Add</Button>
+              <Button variant="secondary" size="lg" icon={<Download />}>Download</Button>
+              <Button variant="tertiary" size="lg" icon={<ArrowRight />} iconPosition="right">Next</Button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Icon Positioning Examples */}
+      <div>
+        <h3 style={{ 
+          marginBottom: 'var(--spacing-4)', 
+          fontSize: 'var(--font-size-lg)', 
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: 0
+        }}>
+          Icon Positioning
+        </h3>
+        <div style={{ 
+          display: 'flex', 
+          gap: 'var(--spacing-4)', 
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 'var(--spacing-4)'
+        }}>
+          <Button variant="primary" icon={<Plus />} iconPosition="left">
+            Add Item
+          </Button>
+          <Button variant="secondary" icon={<ArrowRight />} iconPosition="right">
+            Continue
+          </Button>
+          <Button variant="tertiary" icon={<Download />} iconPosition="left">
+            Download
+          </Button>
+          <Button variant="primary" icon={<ChevronDown />} iconPosition="right">
+            Options
+          </Button>
         </div>
       </div>
     </div>
@@ -356,7 +400,7 @@ export const AllVariants: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Comprehensive overview of all button variants, states, and sizes including loading states.'
+        story: 'Comprehensive overview of all button variants, states, sizes, and icon positioning options.'
       }
     }
   }
@@ -416,7 +460,7 @@ export const InFormContext: Story = {
           <Button variant="tertiary" size="md">
             Cancel
           </Button>
-          <Button variant="primary" size="md" type="submit">
+          <Button variant="primary" size="md" type="submit" icon={<ArrowRight />} iconPosition="right">
             Send Message
           </Button>
         </div>
@@ -426,7 +470,7 @@ export const InFormContext: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example showing buttons in a realistic form context with proper spacing and hierarchy.'
+        story: 'Example showing buttons with icons in a realistic form context with proper spacing and hierarchy.'
       }
     }
   }

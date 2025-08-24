@@ -1,95 +1,72 @@
-// stories/ConversationCard.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { ConversationCard } from '../components/ConversationCard'
+import type { ConversationData, AnalysisResult } from '../components/ConversationCard'
 import '../styles/tokens.css'
-
-// Define types locally to avoid import issues
-interface ConversationData {
-  id: string
-  title: string
-  platform: string
-  message_count: number
-  created_at: string
-  user_id: string | null
-}
-
-interface AnalysisResult {
-  summary: string
-  keyTopics: string[]
-  nextSteps: string[]
-  openQuestions: string[]
-  sentiment: 'positive' | 'neutral' | 'needs-attention'
-  progress: number
-}
 
 const meta: Meta<typeof ConversationCard> = {
   title: 'Components/ConversationCard',
   component: ConversationCard,
   parameters: {
-    layout: 'fullscreen',
+    layout: 'padded',
     docs: {
       description: {
-        component: 'Individual conversation display component for ThreadCub dashboard. Features expandable AI analysis, action buttons, platform badges, and full design token integration. Supports waitlist restrictions and various interaction states.'
+        component:
+          'ConversationCard component displays conversation data with analysis results. Features action buttons with optional Lucide icons, expandable analysis section, and AI service tags using design system components.'
       }
     }
   },
-  decorators: [
-    (Story) => (
-      <div style={{ 
-        backgroundColor: 'var(--color-gray-50)', 
-        minHeight: '100vh',
-        padding: 'var(--spacing-6)',
-        fontFamily: 'var(--font-family-primary)'
-      }}>
-        <div style={{
-          backgroundColor: 'var(--color-white)',
-          borderRadius: 'var(--border-radius-lg)',
-          boxShadow: 'var(--shadow-card)',
-          overflow: 'hidden'
-        }}>
-          <Story />
-        </div>
-      </div>
-    ),
-  ],
   argTypes: {
     conversation: {
-      control: false,
+      control: 'object',
       description: 'Conversation data object'
     },
     analysis: {
-      control: false,
-      description: 'Analysis result if available'
+      control: 'object',
+      description: 'Optional analysis result data'
     },
     isAnalyzing: {
       control: 'boolean',
-      description: 'Whether analysis is currently loading'
+      description: 'Whether analysis is in progress',
+      table: { defaultValue: { summary: 'false' } }
     },
     showAnalysis: {
       control: 'boolean',
-      description: 'Whether analysis is currently visible'
+      description: 'Whether to show analysis section',
+      table: { defaultValue: { summary: 'false' } }
     },
     isPending: {
       control: 'boolean',
-      description: 'Whether user is on waitlist (affects button availability)'
+      description: 'Whether user is on waitlist (disables some buttons)',
+      table: { defaultValue: { summary: 'false' } }
+    },
+    showButtonIcons: {
+      control: 'boolean',
+      description: 'Whether to show Lucide icons in action buttons',
+      table: { defaultValue: { summary: 'false' } }
     },
     onAnalyze: {
       action: 'analyze',
-      description: 'Analyze button handler'
+      description: 'Callback when analyze button is clicked'
     },
     onDeepDive: {
-      action: 'deep-dive', 
-      description: 'Deep dive button handler'
+      action: 'deep-dive',
+      description: 'Callback when deep dive button is clicked'
     },
     onActionPlan: {
       action: 'action-plan',
-      description: 'Action plan button handler'
+      description: 'Callback when action plan button is clicked'
     },
     onContinue: {
       action: 'continue',
-      description: 'Continue conversation button handler'
+      description: 'Callback when continue button is clicked'
     }
+  },
+  args: {
+    onAnalyze: fn(),
+    onDeepDive: fn(),
+    onActionPlan: fn(),
+    onContinue: fn()
   },
   tags: ['autodocs']
 }
@@ -100,317 +77,259 @@ type Story = StoryObj<typeof ConversationCard>
 // Sample data
 const sampleConversation: ConversationData = {
   id: '1',
-  title: 'Thu 21 Aug 17:00 - Storybook cont - Claude',
-  platform: 'claude.ai',
-  message_count: 37,
-  created_at: '2025-08-21T17:00:00.000Z',
-  user_id: 'user123'
+  title: 'Product Roadmap Discussion',
+  platform: 'claude',
+  message_count: 42,
+  created_at: '2024-01-15T10:30:00Z',
+  user_id: 'user-123'
 }
 
 const sampleAnalysis: AnalysisResult = {
-  summary: 'Discussion about improving ThreadCub design system components, ensuring proper use of design tokens, and fixing TypeScript errors in Storybook stories.',
-  keyTopics: ['Design System', 'Storybook', 'TypeScript', 'Design Tokens', 'Component Architecture'],
+  summary: 'Team discussed Q2 product roadmap priorities, focusing on user authentication improvements and mobile app features. Key decisions made around timeline and resource allocation.',
+  keyTopics: ['Authentication', 'Mobile App', 'Timeline', 'Resources', 'Q2 Planning'],
   nextSteps: [
-    'Complete the DashboardPage component using StatsCard and ConversationCard',
-    'Create Storybook stories for new components',
-    'Test the AppLayout integration with the new page components',
-    'Update the design system documentation'
+    'Schedule technical review meeting with engineering team',
+    'Create detailed specifications for authentication system',
+    'Conduct user research for mobile app features',
+    'Finalize budget allocation for Q2 initiatives'
   ],
   openQuestions: [
-    'Should we create additional reusable components for the dashboard?',
-    'How should we handle the existing conversation/thread API integration?'
+    'What is the expected timeline for the authentication overhaul?',
+    'Should we prioritize iOS or Android development first?',
+    'Do we need additional team members for the mobile project?'
   ],
   sentiment: 'positive',
   progress: 75
 }
 
-// Basic states
+// Basic variants
 export const Default: Story = {
   args: {
+    conversation: sampleConversation
+  }
+}
+
+export const WithButtonIcons: Story = {
+  args: {
     conversation: sampleConversation,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
+    analysis: sampleAnalysis,
+    showAnalysis: true,
+    showButtonIcons: true
+  }
+}
+
+export const WithoutButtonIcons: Story = {
+  args: {
+    conversation: sampleConversation,
+    analysis: sampleAnalysis,
+    showAnalysis: true,
+    showButtonIcons: false
   }
 }
 
 export const Analyzing: Story = {
   args: {
     conversation: sampleConversation,
-    isAnalyzing: true,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
+    isAnalyzing: true
   }
 }
 
-export const WithAnalysis: Story = {
+export const AnalysisHidden: Story = {
+  args: {
+    conversation: sampleConversation,
+    analysis: sampleAnalysis,
+    showAnalysis: false
+  }
+}
+
+export const UserOnWaitlist: Story = {
   args: {
     conversation: sampleConversation,
     analysis: sampleAnalysis,
     showAnalysis: true,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
-  }
-}
-
-export const WaitlistUser: Story = {
-  args: {
-    conversation: sampleConversation,
-    analysis: sampleAnalysis,
-    showAnalysis: true,
-    isPending: true,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
+    isPending: true
   },
   parameters: {
     docs: {
       description: {
-        story: 'Shows how the card appears for waitlist users with restricted access to Deep Dive and Action Plan features.'
+        story: 'When user is on waitlist, Deep Dive and Action Plan buttons are disabled.'
       }
     }
   }
 }
 
-// Different platforms
+// Different AI services
+export const ClaudeConversation: Story = {
+  args: {
+    conversation: {
+      id: '1',
+      title: 'AI Strategy Discussion',
+      platform: 'claude',
+      message_count: 28,
+      created_at: '2024-01-15T10:30:00Z',
+      user_id: 'user-123'
+    }
+  }
+}
+
 export const ChatGPTConversation: Story = {
   args: {
     conversation: {
-      ...sampleConversation,
-      title: 'Building a React Dashboard Component',
+      id: '2',
+      title: 'Content Creation Session',
       platform: 'chatgpt',
-      message_count: 24
-    },
-    analysis: {
-      ...sampleAnalysis,
-      summary: 'Collaborative development of a React dashboard component with proper state management and responsive design patterns.',
-      keyTopics: ['React', 'Dashboard', 'State Management', 'Responsive Design'],
-      progress: 60
-    },
-    showAnalysis: true,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
+      message_count: 56,
+      created_at: '2024-01-16T14:20:00Z',
+      user_id: 'user-456'
+    }
+  }
+}
+
+export const CopilotConversation: Story = {
+  args: {
+    conversation: {
+      id: '3',
+      title: 'Code Review and Optimization',
+      platform: 'copilot',
+      message_count: 89,
+      created_at: '2024-01-17T09:15:00Z',
+      user_id: 'user-789'
+    }
   }
 }
 
 export const GeminiConversation: Story = {
   args: {
     conversation: {
-      ...sampleConversation,
-      title: 'API Integration and Error Handling Strategies',
+      id: '4',
+      title: 'Research and Analysis',
       platform: 'gemini',
-      message_count: 15,
-      created_at: '2025-08-20T14:30:00.000Z'
-    },
-    analysis: {
-      summary: 'Deep dive into API integration patterns, error handling strategies, and best practices for resilient application architecture.',
-      keyTopics: ['API Integration', 'Error Handling', 'Architecture', 'Best Practices'],
-      nextSteps: [
-        'Implement retry logic with exponential backoff',
-        'Add comprehensive error logging',
-        'Create user-friendly error messages'
-      ],
-      openQuestions: [
-        'Should we implement circuit breaker pattern?',
-        'What\'s the optimal timeout configuration?'
-      ],
-      sentiment: 'neutral',
-      progress: 45
-    },
-    showAnalysis: true,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
+      message_count: 34,
+      created_at: '2024-01-18T16:45:00Z',
+      user_id: 'user-101'
+    }
   }
 }
 
-// Different conversation lengths
-export const ShortConversation: Story = {
-  args: {
-    conversation: {
-      ...sampleConversation,
-      title: 'Quick CSS Flexbox Question',
-      message_count: 4,
-      created_at: '2025-08-21T09:15:00.000Z'
-    },
-    analysis: {
-      summary: 'Brief discussion about CSS Flexbox alignment properties and common layout patterns.',
-      keyTopics: ['CSS', 'Flexbox', 'Layout'],
-      nextSteps: ['Apply flexbox solution to the current project'],
-      openQuestions: [],
-      sentiment: 'positive',
-      progress: 90
-    },
-    showAnalysis: true,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
-  }
-}
-
-export const LongConversation: Story = {
-  args: {
-    conversation: {
-      ...sampleConversation,
-      title: 'Complete E-commerce Platform Architecture Design',
-      message_count: 156,
-      created_at: '2025-08-18T10:00:00.000Z'
-    },
-    analysis: {
-      summary: 'Comprehensive architectural planning for a scalable e-commerce platform including microservices design, database architecture, payment integration, and deployment strategies.',
-      keyTopics: ['E-commerce', 'Microservices', 'Database Design', 'Payment Systems', 'DevOps', 'Scalability'],
-      nextSteps: [
-        'Create detailed microservices boundary map',
-        'Design database schemas for user, product, and order services',
-        'Evaluate payment gateway options and integration complexity',
-        'Set up CI/CD pipeline infrastructure',
-        'Implement monitoring and logging strategy'
-      ],
-      openQuestions: [
-        'Should we use event sourcing for order management?',
-        'What\'s the best approach for handling inventory consistency?',
-        'How do we handle cross-service transactions?'
-      ],
-      sentiment: 'positive',
-      progress: 25
-    },
-    showAnalysis: true,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
-  }
-}
-
-// Different sentiment types
-export const NeedsAttention: Story = {
-  args: {
-    conversation: {
-      ...sampleConversation,
-      title: 'Debugging Production Performance Issues',
-      platform: 'claude.ai',
-      message_count: 28
-    },
-    analysis: {
-      summary: 'Investigation of critical performance bottlenecks in production environment affecting user experience and system stability.',
-      keyTopics: ['Performance', 'Debugging', 'Production Issues', 'Optimization'],
-      nextSteps: [
-        'Implement immediate hotfix for memory leak',
-        'Add performance monitoring dashboards',
-        'Optimize database queries causing timeouts'
-      ],
-      openQuestions: [
-        'Root cause of the memory leak still unclear',
-        'Impact on user retention needs assessment'
-      ],
-      sentiment: 'needs-attention',
-      progress: 30
-    },
-    showAnalysis: true,
-    onAnalyze: fn(),
-    onDeepDive: fn(),
-    onActionPlan: fn(),
-    onContinue: fn()
-  }
-}
-
-// Multiple conversations in a list
-export const ConversationList: Story = {
+// Multiple cards layout
+export const MultipleCards: Story = {
   render: () => (
-    <div>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: 0,
+      maxWidth: '800px',
+      border: 'var(--border-width-thin) solid var(--color-gray-200)',
+      borderRadius: 'var(--border-radius-lg)',
+      overflow: 'hidden'
+    }}>
       <ConversationCard
-        conversation={{
-          id: '1',
-          title: 'Thu 21 Aug 17:00 - Storybook cont - Claude',
-          platform: 'claude.ai',
-          message_count: 37,
-          created_at: '2025-08-21T17:00:00.000Z',
-          user_id: 'user123'
-        }}
+        conversation={sampleConversation}
         analysis={sampleAnalysis}
         showAnalysis={true}
-        onAnalyze={fn()}
-        onDeepDive={fn()}
-        onActionPlan={fn()}
-        onContinue={fn()}
       />
-      
       <ConversationCard
         conversation={{
           id: '2',
-          title: 'Building React Components with TypeScript',
+          title: 'Marketing Campaign Review',
           platform: 'chatgpt',
-          message_count: 24,
-          created_at: '2025-08-20T14:30:00.000Z',
-          user_id: 'user123'
+          message_count: 28,
+          created_at: '2024-01-18T09:15:00Z',
+          user_id: 'user-789'
         }}
-        isAnalyzing={true}
-        onAnalyze={fn()}
-        onDeepDive={fn()}
-        onActionPlan={fn()}
-        onContinue={fn()}
       />
-      
       <ConversationCard
         conversation={{
           id: '3',
-          title: 'API Design Best Practices',
+          title: 'Customer Feedback Analysis',
           platform: 'gemini',
-          message_count: 15,
-          created_at: '2025-08-19T11:20:00.000Z',
-          user_id: 'user123'
+          message_count: 73,
+          created_at: '2024-01-22T16:20:00Z',
+          user_id: 'user-456'
         }}
-        onAnalyze={fn()}
-        onDeepDive={fn()}
-        onActionPlan={fn()}
-        onContinue={fn()}
+        isAnalyzing={true}
       />
     </div>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Example of multiple conversation cards in a list layout, showing different states: analyzed, analyzing, and default.'
+        story: 'Multiple conversation cards showing different AI services and states in a list layout.'
       }
     }
   }
 }
 
-// Empty state (for when no conversations exist)
-export const EmptyState: Story = {
+export const AIServiceShowcase: Story = {
   render: () => (
-    <div style={{
-      padding: 'var(--spacing-8)',
-      textAlign: 'center',
-      color: 'var(--color-gray-500)'
+    <div style={{ 
+      display: 'grid',
+      gap: 'var(--spacing-4)',
+      fontFamily: 'var(--font-family-primary)'
     }}>
-      <div style={{ fontSize: '4rem', marginBottom: 'var(--spacing-4)' }}>🤖</div>
-      <p style={{ 
-        fontSize: 'var(--font-size-lg)', 
-        marginBottom: 'var(--spacing-2)',
-        fontWeight: 'var(--font-weight-medium)'
+      <h3 style={{ 
+        margin: '0 0 var(--spacing-4) 0',
+        fontSize: 'var(--font-size-lg)',
+        fontWeight: 'var(--font-weight-semibold)',
+        color: 'var(--color-gray-900)'
       }}>
-        No conversations yet!
-      </p>
-      <p style={{ fontSize: 'var(--font-size-sm)' }}>
-        Use your Chrome extension to save conversations from Claude, ChatGPT, or Gemini.
-      </p>
+        Different AI Services
+      </h3>
+      
+      <div style={{
+        border: 'var(--border-width-thin) solid var(--color-gray-200)',
+        borderRadius: 'var(--border-radius-lg)',
+        overflow: 'hidden'
+      }}>
+        <ConversationCard
+          conversation={{
+            id: '1',
+            title: 'Claude Strategy Discussion',
+            platform: 'claude',
+            message_count: 42,
+            created_at: '2024-01-15T10:30:00Z',
+            user_id: 'user-123'
+          }}
+          analysis={sampleAnalysis}
+          showAnalysis={true}
+        />
+        <ConversationCard
+          conversation={{
+            id: '2',
+            title: 'ChatGPT Content Creation',
+            platform: 'chatgpt',
+            message_count: 56,
+            created_at: '2024-01-16T14:20:00Z',
+            user_id: 'user-456'
+          }}
+        />
+        <ConversationCard
+          conversation={{
+            id: '3',
+            title: 'GitHub Copilot Code Review',
+            platform: 'copilot',
+            message_count: 89,
+            created_at: '2024-01-17T09:15:00Z',
+            user_id: 'user-789'
+          }}
+        />
+        <ConversationCard
+          conversation={{
+            id: '4',
+            title: 'Gemini Research Analysis',
+            platform: 'gemini',
+            message_count: 34,
+            created_at: '2024-01-18T16:45:00Z',
+            user_id: 'user-101'
+          }}
+        />
+      </div>
     </div>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Empty state shown when there are no conversations to display.'
+        story: 'Showcase showing different AI services with color-coded tags: Claude (primary/purple), ChatGPT (success/green), Copilot (secondary/gray), Gemini (warning/yellow).'
       }
     }
   }

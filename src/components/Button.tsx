@@ -12,6 +12,10 @@ export interface ButtonProps {
   className?: string
   /** Loading state */
   loading?: boolean
+  /** Icon component (Lucide React icon) */
+  icon?: React.ReactNode
+  /** Icon position */
+  iconPosition?: 'left' | 'right'
 }
 
 export const Button: React.FC<ButtonProps> = ({ 
@@ -23,7 +27,9 @@ export const Button: React.FC<ButtonProps> = ({
   type = 'button',
   style,
   className,
-  loading = false
+  loading = false,
+  icon,
+  iconPosition = 'left'
 }) => {
   // Size scales using design tokens
   const sizeStyles = {
@@ -31,19 +37,22 @@ export const Button: React.FC<ButtonProps> = ({
       height: '36px',
       paddingInline: 'var(--spacing-4)',
       fontSize: 'var(--font-size-sm)',
-      spinnerSize: '14px'
+      spinnerSize: '14px',
+      iconSize: '14px'
     },
     md: {
       height: '40px', 
       paddingInline: 'var(--spacing-5)',
       fontSize: 'var(--font-size-base)',
-      spinnerSize: '16px'
+      spinnerSize: '16px',
+      iconSize: '16px'
     },
     lg: {
       height: '44px',
       paddingInline: 'var(--spacing-6)',
       fontSize: 'var(--font-size-lg)',
-      spinnerSize: '18px'
+      spinnerSize: '18px',
+      iconSize: '18px'
     }
   }[size]
 
@@ -141,6 +150,56 @@ export const Button: React.FC<ButtonProps> = ({
     )
   }
 
+  // Icon wrapper with proper sizing
+  const IconWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <span
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        flexShrink: 0,
+        lineHeight: 1
+      }}
+    >
+      {React.isValidElement(children)
+        ? React.cloneElement(children as React.ReactElement<any>, {
+            size: parseInt(sizeStyles.iconSize),
+            ...(children.props || {})
+          })
+        : children}
+    </span>
+  )
+
+  // Render content with proper icon positioning
+  const renderContent = () => {
+    const textSpan = (
+      <span style={{
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+      }}>
+        {children}
+      </span>
+    )
+
+    if (!icon) return textSpan
+
+    if (iconPosition === 'right') {
+      return (
+        <>
+          {textSpan}
+          <IconWrapper>{icon}</IconWrapper>
+        </>
+      )
+    }
+
+    return (
+      <>
+        <IconWrapper>{icon}</IconWrapper>
+        {textSpan}
+      </>
+    )
+  }
+
   // Add keyframe animation for spinner
   React.useEffect(() => {
     const existingStyle = document.getElementById('button-spinner-styles')
@@ -232,13 +291,7 @@ export const Button: React.FC<ButtonProps> = ({
       aria-label={loading ? `Loading ${children}` : undefined}
     >
       {loading && <LoadingSpinner />}
-      <span style={{
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
-      }}>
-        {children}
-      </span>
+      {renderContent()}
     </button>
   )
 }
