@@ -20,17 +20,17 @@ export const SideNavHeader: React.FC<SideNavHeaderProps> = ({
       onClick={onToggle}
       style={{
         width: '100%',
-        padding: isCollapsed ? 'var(--spacing-4)' : 'var(--spacing-4) var(--spacing-6)',
+        padding: 'var(--spacing-4) var(--spacing-4)', // Consistent padding - no conditional
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        minHeight: '72px',
+        minHeight: '64px',
         border: 'none',
         background: 'transparent',
         cursor: 'pointer',
         borderRadius: 'var(--border-radius-lg)',
         transition: 'var(--transition-base)',
-        margin: 'var(--spacing-1)'
+        margin: 'var(--spacing-0)'
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.backgroundColor = 'var(--color-gray-50)'
@@ -39,7 +39,7 @@ export const SideNavHeader: React.FC<SideNavHeaderProps> = ({
         e.currentTarget.style.backgroundColor = 'transparent'
       }}
     >
-      {/* Logo and App Name */}
+      {/* Logo - Always in same position */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
         <Logo size="sm" />
         {!isCollapsed && (
@@ -49,7 +49,9 @@ export const SideNavHeader: React.FC<SideNavHeaderProps> = ({
               fontWeight: 'var(--font-weight-semibold)',
               color: 'var(--color-gray-900)',
               fontFamily: 'var(--font-family-primary)',
-              userSelect: 'none'
+              userSelect: 'none',
+              opacity: isCollapsed ? 0 : 1,
+              transition: 'opacity var(--transition-base)'
             }}
           >
             {appName}
@@ -57,7 +59,7 @@ export const SideNavHeader: React.FC<SideNavHeaderProps> = ({
         )}
       </div>
       
-      {/* Chevron - More visible and larger */}
+      {/* Chevron */}
       <div
         style={{
           width: 'var(--spacing-8, 32px)',
@@ -66,7 +68,7 @@ export const SideNavHeader: React.FC<SideNavHeaderProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: 'var(--border-radius-base)',
-          backgroundColor: 'var(--color-gray-100)',
+          backgroundColor: 'var(--color-white)',
           transition: 'var(--transition-base)',
           flexShrink: 0
         }}

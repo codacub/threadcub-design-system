@@ -38,8 +38,8 @@ export const SideNavItem: React.FC<SideNavItemProps> = ({
       style.id = 'sidenav-svg-styles'
       style.textContent = `
         .sidenav-icon-container svg {
-          width: var(--icon-size-base, 16px);
-          height: var(--icon-size-base, 16px);
+          width: var(--icon-size-base, 24px);
+          height: var(--icon-size-base, 24px);
           display: block;
           stroke-width: 2;
           stroke: currentColor;
@@ -56,21 +56,19 @@ export const SideNavItem: React.FC<SideNavItemProps> = ({
       className={className}
       style={{
         width: '100%',
-        height: collapsed ? 'var(--min-touch-target)' : 'var(--sidebar-nav-item-height)',
+        height: '48px', // Fixed height from your design
         border: 'none',
         background: active ? 'var(--color-primary-bg)' : 'transparent',
         borderRadius: 'var(--border-radius-lg)',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
-        gap: collapsed ? '0' : 'var(--spacing-3)',
-        padding: collapsed ? '0' : `0 var(--spacing-3)`,
+        padding: 0,
         transition: 'var(--transition-base)',
         color: active ? 'var(--color-primary-text)' : 'var(--color-gray-600)',
-        fontSize: 'var(--font-size-sm)',
+        fontSize: 'var(--font-size-base)', // Use base font size
         fontWeight: active ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)',
         fontFamily: 'var(--font-family-primary)',
-        justifyContent: collapsed ? 'center' : 'flex-start',
         position: 'relative',
         outline: 'none',
         ...style
@@ -86,17 +84,23 @@ export const SideNavItem: React.FC<SideNavItemProps> = ({
         }
       }}
       onFocus={(e) => {
-        e.currentTarget.style.boxShadow = `0 0 0 2px var(--color-primary-light)`
+        if (!collapsed) {
+          e.currentTarget.style.boxShadow = `0 0 0 2px var(--color-primary-light)`
+        }
       }}
       onBlur={(e) => {
         e.currentTarget.style.boxShadow = 'none'
       }}
     >
-      {/* Icon */}
+      {/* Icon - Fixed at 12px from left edge */}
       <div 
         className="sidenav-icon-container"
         dangerouslySetInnerHTML={{ __html: icon }}
         style={{
+          position: 'absolute',
+          left: '12px', // Fixed 12px from left edge as shown in your design
+          top: '50%',
+          transform: 'translateY(-50%)',
           width: 'var(--icon-size-base)',
           height: 'var(--icon-size-base)',
           display: 'flex',
@@ -109,6 +113,8 @@ export const SideNavItem: React.FC<SideNavItemProps> = ({
       {/* Label - Only show when expanded */}
       {!collapsed && (
         <span style={{ 
+          marginLeft: '48px', // 12px (left padding) + 24px (icon width) + 12px (gap) = 48px
+          marginRight: '12px', // 12px padding on right
           flex: 1, 
           textAlign: 'left',
           overflow: 'hidden',
@@ -121,12 +127,20 @@ export const SideNavItem: React.FC<SideNavItemProps> = ({
       
       {/* Badge */}
       {badge && badge > 0 && (
-        <Badge 
-          count={badge} 
-          collapsed={collapsed} 
-          active={active} 
-          size="sm"
-        />
+        <div style={{
+          position: 'absolute',
+          right: collapsed ? '-12px' : '12px', // Adjust positioning based on collapse state
+          top: collapsed ? '-4px' : '50%',
+          transform: collapsed ? 'none' : 'translateY(-50%)',
+          zIndex: 10
+        }}>
+          <Badge 
+            count={badge} 
+            collapsed={collapsed} 
+            active={active} 
+            size="sm"
+          />
+        </div>
       )}
     </button>
   )

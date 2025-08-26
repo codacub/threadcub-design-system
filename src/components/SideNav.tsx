@@ -57,22 +57,22 @@ export const SideNav: React.FC<SideNavProps> = ({
   }
 
   return (
-    <div 
-      className={className}
-      style={{
-        width: isCollapsed ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width-expanded)',
-        height: '100vh',
-        backgroundColor: 'var(--color-white)',
-        borderRight: `var(--border-width-thin) solid var(--color-gray-200)`,
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'width var(--transition-base)',
-        position: 'relative',
-        flexShrink: 0,
-        ...style
-      }}
-    >
-      {/* Header - Fully clickable */}
+ <div 
+   className={className}
+   style={{
+     width: isCollapsed ? '64px' : '280px', // Fixed: 64px not var(--spacing-15)
+     height: '100vh',
+     backgroundColor: 'var(--color-white)',
+     borderRight: `var(--border-width-thin) solid var(--color-gray-200)`,
+     display: 'flex',
+     flexDirection: 'column',
+     transition: 'width var(--transition-base)',
+     position: 'relative',
+     flexShrink: 0,
+     ...style
+   }}
+ >
+      {/* Header */}
       <SideNavHeader 
         isCollapsed={isCollapsed}
         onToggle={handleToggleCollapse}
@@ -83,10 +83,10 @@ export const SideNav: React.FC<SideNavProps> = ({
       <nav 
         style={{
           flex: 1,
-          padding: isCollapsed ? 'var(--spacing-2)' : 'var(--spacing-2) var(--spacing-4)',
+          padding: 'var(--spacing-2)', // 8px padding around nav area
           display: 'flex',
           flexDirection: 'column',
-          gap: 'var(--sidebar-nav-gap)',
+          gap: 'var(--spacing-2)', // Fixed: 8px gap between items (not spacing-3)
           overflowY: 'auto',
           overflowX: 'hidden'
         }}

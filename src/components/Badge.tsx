@@ -46,13 +46,13 @@ export const Badge: React.FC<BadgeProps> = ({
       fontSize: 'var(--font-size-xs)',
       padding: 'var(--spacing-1) var(--spacing-2)', // 4px 8px
       iconSize: 'var(--spacing-3)', // 12px
-      dotSize: 'var(--spacing-2)' // 8px
+      dotSize: 'var(--spacing-3)' // 8px
     },
     md: {
       fontSize: 'var(--font-size-xs)',
       padding: 'var(--spacing-1) var(--spacing-2)', // 4px 8px
       iconSize: 'var(--spacing-4)', // 16px (better for 14px icons)
-      dotSize: 'var(--spacing-2)' // 8px
+      dotSize: 'var(--spacing-3)' // 8px
     },
     lg: {
       fontSize: 'var(--font-size-sm)',
