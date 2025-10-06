@@ -35,6 +35,9 @@ export type { AuthCardProps } from './components/AuthCard'
 export { ResetPasswordCard } from './components/ResetPasswordCard'
 export type { ResetPasswordCardProps } from './components/ResetPasswordCard'
 
+export { UpdatePasswordCard } from './components/UpdatePasswordCard'
+export type { UpdatePasswordCardProps } from './components/UpdatePasswordCard'
+
 export { StatsCard } from './components/StatsCard'
 export type { StatsCardProps } from './components/StatsCard'
 
