@@ -18,24 +18,16 @@ export interface AuthCardProps {
   onGithubAuth?: () => void
   onForgotPassword?: () => void
   loading?: boolean
-  /**
-   * Message to display above the form.
-   * `dismissible` controls whether a close button appears (requires onDismissMessage to work).
-   */
   message?: {
     type: 'success' | 'error' | 'info' | 'warning'
     text: string
     dismissible?: boolean
   } | null
-  /** Callback when message is dismissed (only used if message.dismissible is true). */
   onDismissMessage?: () => void
-  /** Show remember me checkbox for sign in */
   showRememberMe?: boolean
-  /** Remember me checkbox state */
   rememberMe?: boolean
-  /** Callback when remember me state changes */
   onRememberMeChange?: (checked: boolean) => void
-
+  showToggle?: boolean
   maxWidth?: string
   minWidth?: string
   padding?: 'sm' | 'md' | 'lg'
@@ -56,6 +48,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
   showRememberMe = false,
   rememberMe = false,
   onRememberMeChange,
+  showToggle = true,
   maxWidth = '480px',
   minWidth = '480px',
   padding = 'lg',
@@ -134,11 +127,8 @@ export const AuthCard: React.FC<AuthCardProps> = ({
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    // Mark all fields as touched on submit
     setTouched({ email: true, password: true })
 
-    // Validate before submitting
     if (!isFormValid) {
       return
     }
@@ -154,7 +144,6 @@ export const AuthCard: React.FC<AuthCardProps> = ({
 
   // Handle toggle mode
   const handleToggleMode = () => {
-    // Reset form when switching modes
     setFormData({ email: '', password: '' })
     setTouched({ email: false, password: false })
     if (onToggleMode) {
@@ -169,7 +158,6 @@ export const AuthCard: React.FC<AuthCardProps> = ({
         title: 'Get started',
         subtitle: 'Create a new account',
         buttonText: loading ? 'Creating account...' : 'Get started',
-        toggleText: 'Already have an account? Sign in',
         socialGoogleText: 'Sign up with Google',
         socialGithubText: 'Sign up with GitHub'
       }
@@ -178,7 +166,6 @@ export const AuthCard: React.FC<AuthCardProps> = ({
         title: 'Welcome back',
         subtitle: 'Sign in',
         buttonText: loading ? 'Signing in...' : 'Sign In',
-        toggleText: "Don't have an account? Sign up",
         socialGoogleText: 'Sign in with Google',
         socialGithubText: 'Sign in with GitHub'
       }
@@ -186,6 +173,26 @@ export const AuthCard: React.FC<AuthCardProps> = ({
   }
 
   const content = getContent()
+
+  const linkStyle: React.CSSProperties = {
+    color: 'var(--color-gray-900)',
+    textDecoration: 'none',
+    fontWeight: 'var(--font-weight-normal)',
+    transition: 'text-decoration var(--transition-base)'
+  }
+
+  const buttonLinkStyle: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    fontSize: 'var(--font-size-base)',
+    color: 'var(--color-primary)',
+    cursor: 'pointer',
+    fontFamily: 'var(--font-family-primary)',
+    fontWeight: 'var(--font-weight-normal)',
+    textDecoration: 'none',
+    padding: 0,
+    transition: 'text-decoration var(--transition-base)'
+  }
 
   // Render
   return (
@@ -263,7 +270,6 @@ export const AuthCard: React.FC<AuthCardProps> = ({
               justifyContent: 'space-between', 
               alignItems: 'center' 
             }}>
-              {/* Left side - Save account checkbox */}
               <Checkbox
                 label="Keep me signed in"
                 checked={rememberMe}
@@ -271,24 +277,11 @@ export const AuthCard: React.FC<AuthCardProps> = ({
                 size="md"
               />
               
-              {/* Right side - Forgot password link */}
               {onForgotPassword && (
                 <button
                   type="button"
                   onClick={onForgotPassword}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: 'var(--font-size-base)',
-                    color: 'var(--color-primary)',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-family-primary)',
-                    fontWeight: 'var(--font-weight-normal)',
-                    textDecoration: 'none',
-                    transition: 'text-decoration var(--transition-base)'
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                  onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                  style={buttonLinkStyle}
                 >
                   Forgot password?
                 </button>
@@ -302,19 +295,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
               <button
                 type="button"
                 onClick={onForgotPassword}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: 'var(--font-size-base)',
-                  color: 'var(--color-primary)',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-family-primary)',
-                  fontWeight: 'var(--font-weight-normal)',
-                  textDecoration: 'none',
-                  transition: 'text-decoration var(--transition-base)'
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                style={buttonLinkStyle}
               >
                 Forgot password?
               </button>
@@ -355,63 +336,39 @@ export const AuthCard: React.FC<AuthCardProps> = ({
 
       {/* Toggle mode and terms */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)' }}>
-        {/* Toggle mode with split text styling */}
-        <div style={{
-          fontSize: 'var(--font-size-base)',
-          fontFamily: 'var(--font-family-primary)',
-          color: 'var(--color-gray-600)',
-          textAlign: 'center'
-        }}>
-          {mode === 'signin' ? (
-            <>
-              Don't have an account?{' '}
-              <button
-                type="button"
-                onClick={handleToggleMode}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: 'var(--font-size-base)',
-                  color: 'var(--color-primary)',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-family-primary)',
-                  fontWeight: 'var(--font-weight-normal)',
-                  textDecoration: 'none',
-                  padding: 0,
-                  transition: 'text-decoration var(--transition-base)'
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
-              >
-                Sign up
-              </button>
-            </>
-          ) : (
-            <>
-              Already have an account?{' '}
-              <button
-                type="button"
-                onClick={handleToggleMode}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: 'var(--font-size-base)',
-                  color: 'var(--color-primary)',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-family-primary)',
-                  fontWeight: 'var(--font-weight-normal)',
-                  textDecoration: 'none',
-                  padding: 0,
-                  transition: 'text-decoration var(--transition-base)'
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
-              >
-                Sign in
-              </button>
-            </>
-          )}
-        </div>
+        {/* Toggle mode - only show if showToggle is true */}
+        {showToggle && (
+          <div style={{
+            fontSize: 'var(--font-size-base)',
+            fontFamily: 'var(--font-family-primary)',
+            color: 'var(--color-gray-600)',
+            textAlign: 'center'
+          }}>
+            {mode === 'signin' ? (
+              <>
+                Don't have an account?{' '}
+                <button
+                  type="button"
+                  onClick={handleToggleMode}
+                  style={buttonLinkStyle}
+                >
+                  Sign up
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{' '}
+                <button
+                  type="button"
+                  onClick={handleToggleMode}
+                  style={buttonLinkStyle}
+                >
+                  Sign in
+                </button>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Terms and Privacy disclaimer */}
         <div style={{
@@ -421,33 +378,12 @@ export const AuthCard: React.FC<AuthCardProps> = ({
           fontFamily: 'var(--font-family-primary)',
           lineHeight: 'var(--line-height-normal)'
         }}>
-          By continuing, you agree to ThreadCub's{' '}
-          <br />
-          <a
-            href="/terms"
-            style={{
-              color: 'var(--color-gray-900)',
-              textDecoration: 'none',
-              fontWeight: 'var(--font-weight-normal)',
-              transition: 'text-decoration var(--transition-base)'
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
-          >
+          By continuing, you agree to ThreadCub's <br />
+          <a href="/terms" style={linkStyle}>
             Terms of Service
           </a>
           {' '}and{' '}
-          <a
-            href="/privacy"
-            style={{
-              color: 'var(--color-gray-900)',
-              textDecoration: 'none',
-              fontWeight: 'var(--font-weight-normal)',
-              transition: 'text-decoration var(--transition-base)'
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
-          >
+          <a href="/privacy" style={linkStyle}>
             Privacy Policy
           </a>
         </div>

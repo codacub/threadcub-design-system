@@ -192,6 +192,14 @@ export const SignInWithSuccess: Story = {
   }
 }
 
+export const SignInNoToggle: Story = {
+  args: {
+    mode: 'signin',
+    showToggle: false,
+    showRememberMe: true
+  }
+}
+
 export const SignUpWithInfo: Story = {
   args: {
     mode: 'signup',
