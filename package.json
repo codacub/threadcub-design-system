@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build --mode lib",
+    "build": "tsc -b && vite build --mode lib && cp src/styles/tokens.css dist/styles.css",
     "build-lib": "tsc -b && vite build --mode lib && cp src/styles/tokens.css dist/styles.css",
     "patch": "npm version patch",
     "lint": "eslint .",
