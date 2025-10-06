@@ -2,6 +2,8 @@
 import React, { useState } from 'react'
 
 export interface InputProps {
+  /** Input auto complete */
+  autoComplete?: string 
   /** Input label text */
   label?: string
   /** Placeholder text */
@@ -58,7 +60,8 @@ export const Input: React.FC<InputProps> = ({
   id,
   required = false,
   className,
-  style
+  style,
+  autoComplete,
 }) => {
   // Convert props to booleans to handle Storybook string issues
   const isDisabled = Boolean(disabled)
@@ -262,6 +265,7 @@ export const Input: React.FC<InputProps> = ({
                 : hintId
               : undefined
           }
+          autoComplete={autoComplete}
         />
         
         {shouldShowTrailingIcon && (
