@@ -401,6 +401,7 @@ export const PasswordResetFlow: Story = {
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (password: string) => {
+  console.log('Password submitted:', password) // Use the variable
       setLoading(true)
       await new Promise(resolve => setTimeout(resolve, 1500))
       setLoading(false)
