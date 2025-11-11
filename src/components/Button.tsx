@@ -16,6 +16,8 @@ export interface ButtonProps {
   icon?: React.ReactNode
   /** Icon position */
   iconPosition?: 'left' | 'right'
+  /** Title */
+  title?: string  // Add this
 }
 
 export const Button: React.FC<ButtonProps> = ({ 

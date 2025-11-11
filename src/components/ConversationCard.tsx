@@ -3,15 +3,19 @@ import React from 'react'
 import { Button } from './Button'
 import { Heading } from './Heading'
 import { Badge } from './Badge'
-import { Search, MessageCircle, ClipboardList, Play, EyeOff } from 'lucide-react'
+import { Search, MessageCircle, ClipboardList, Play, EyeOff, FolderPlus, Eye } from 'lucide-react'
 
 export interface ConversationData {
   id: string
   title: string
-  platform: string // This could be 'claude', 'chatgpt', 'copilot', etc.
+  platform: string
   message_count: number
   created_at: string
   user_id: string | null
+  source?: string
+  summary?: string
+  content?: any
+  project_id?: string | null
 }
 
 export interface AnalysisResult {
@@ -36,6 +40,12 @@ export interface ConversationCardProps {
   isPending?: boolean
   /** Whether to show icons in buttons */
   showButtonIcons?: boolean
+  /** Whether to show the "Add to Project" button */
+  showProjectButton?: boolean
+  /** Whether to show the "View Details" button */
+  showViewDetails?: boolean
+  /** Display mode: 'card' for card view, 'list' for list view */
+  viewMode?: 'card' | 'list'
   /** Analyze button handler */
   onAnalyze?: (conversation: ConversationData) => void
   /** Deep dive button handler */
@@ -44,6 +54,10 @@ export interface ConversationCardProps {
   onActionPlan?: (conversation: ConversationData) => void
   /** Continue conversation button handler */
   onContinue?: (conversation: ConversationData) => void
+  /** Add to project button handler */
+  onAddToProject?: (conversation: ConversationData) => void
+  /** View details button handler */
+  onViewDetails?: (conversationId: string) => void
   /** Custom className */
   className?: string
   /** Custom styles */
@@ -57,22 +71,41 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
   showAnalysis = false,
   isPending = false,
   showButtonIcons = false,
+  showProjectButton = false,
+  showViewDetails = false,
+  viewMode = 'card',
   onAnalyze,
   onDeepDive,
   onActionPlan,
   onContinue,
+  onAddToProject,
+  onViewDetails,
   className = '',
   style
 }) => {
-  const cardStyles: React.CSSProperties = {
+  // List view styles
+  const listCardStyles: React.CSSProperties = {
     backgroundColor: 'var(--color-white)',
-    borderBottom: `var(--border-width-thin) solid var(--color-gray-200)`,
     padding: 'var(--spacing-6)',
     fontFamily: 'var(--font-family-primary)',
     transition: 'var(--transition-base)',
     cursor: 'default',
     ...style
   }
+
+  // Card view styles
+  const cardCardStyles: React.CSSProperties = {
+    backgroundColor: 'var(--color-white)',
+    borderRadius: 'var(--border-radius-lg)',
+    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+    padding: 'var(--spacing-6)',
+    fontFamily: 'var(--font-family-primary)',
+    transition: 'var(--transition-base)',
+    cursor: 'default',
+    ...style
+  }
+
+  const cardStyles = viewMode === 'list' ? listCardStyles : cardCardStyles
 
   const headerStyles: React.CSSProperties = {
     display: 'flex',
@@ -93,9 +126,10 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
 
   const actionButtonsStyles: React.CSSProperties = {
     display: 'flex',
-    flexDirection: 'column' as const,
+    flexDirection: viewMode === 'list' ? ('row' as const) : ('column' as const),
     gap: 'var(--spacing-2)',
-    minWidth: '120px'
+    minWidth: viewMode === 'list' ? 'auto' : '120px',
+    flexWrap: 'wrap' as const
   }
 
   const analysisContainerStyles: React.CSSProperties = {
@@ -146,33 +180,73 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
     borderTop: `var(--border-width-thin) solid var(--color-primary-light)`
   }
 
+  const previewTextStyles: React.CSSProperties = {
+    fontSize: 'var(--font-size-sm)',
+    color: 'var(--color-gray-600)',
+    marginTop: 'var(--spacing-2)',
+    lineHeight: 'var(--line-height-normal)',
+    display: '-webkit-box',
+    WebkitLineClamp: viewMode === 'list' ? 2 : 3,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden'
+  }
+
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.backgroundColor = 'var(--color-gray-50)'
+    if (viewMode === 'list') {
+      e.currentTarget.style.backgroundColor = 'var(--color-gray-50)'
+    } else {
+      e.currentTarget.style.boxShadow = '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+    }
   }
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.backgroundColor = 'var(--color-white)'
+    if (viewMode === 'list') {
+      e.currentTarget.style.backgroundColor = 'var(--color-white)'
+    } else {
+      e.currentTarget.style.boxShadow = '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
+    }
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    })
+  }
+
+  const getPreviewText = (): string => {
+    if (conversation.summary) return conversation.summary
+    
+    try {
+      if (conversation.content && typeof conversation.content === 'object') {
+        const firstMessage = conversation.content.messages?.[0]?.content
+        if (firstMessage) {
+          return firstMessage.substring(0, 150) + (firstMessage.length > 150 ? '...' : '')
+        }
+      }
+    } catch (e) {
+      console.error('Error extracting preview:', e)
+    }
+    
+    return 'Click to view conversation details'
   }
 
   // Get platform/AI service variant for consistent color coding
   const getPlatformVariant = (platform: string) => {
-      switch (platform.toLowerCase()) {
+    switch (platform.toLowerCase()) {
       case 'claude':
       case 'anthropic':
-        return 'info'    // Badge variant
+        return 'info'
       case 'chatgpt':
       case 'openai':
-        return 'success' // Badge variant
+        return 'success'
       case 'copilot':
       case 'github':
-        return 'base'    // Badge variant
+        return 'base'
       case 'gemini':
       case 'google':
-        return 'warning' // Badge variant
+        return 'warning'
       default:
         return 'base'
     }
@@ -183,7 +257,7 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
     if (isAnalyzing) {
       return {
         children: 'Analyzing...',
-        icon: undefined // Loading spinner will show instead
+        icon: undefined
       }
     }
     
@@ -215,25 +289,37 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
             level={3} 
             margin="none"
             style={{ 
-              fontSize: 'var(--font-size-base)',
+              fontSize: 'var(--font-size-lg)',
               fontWeight: 'var(--font-weight-medium)',
               marginBottom: 'var(--spacing-2)',
               color: 'inherit'
             }}
           >
-            {conversation.title}
+            {conversation.title || 'Untitled Conversation'}
           </Heading>
           
           <div style={metaStyles}>
             <Badge 
-              variant={getPlatformVariant(conversation.platform)}
+              variant={getPlatformVariant(conversation.platform || conversation.source || '')}
               size="md"
             >
-              {conversation.platform}
+              {conversation.platform || conversation.source || 'Unknown'}
             </Badge>
             <span>{conversation.message_count} messages</span>
             <span>{formatDate(conversation.created_at)}</span>
+            {conversation.project_id && (
+              <Badge variant="success" size="sm">
+                In Project
+              </Badge>
+            )}
           </div>
+
+          {/* Preview text - only show when not displaying analysis */}
+          {!showAnalysis && (
+            <p style={previewTextStyles}>
+              {getPreviewText()}
+            </p>
+          )}
 
           {/* Analysis Section */}
           {showAnalysis && analysis && (
@@ -277,10 +363,10 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
                         Key Topics
                       </Heading>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-1)' }}>
-                        {analysis.keyTopics.map((topic) => (
-                          <Badge variant="base" size="sm">
-                          {topic}
-                        </Badge>
+                        {analysis.keyTopics.map((topic, index) => (
+                          <Badge key={index} variant="base" size="sm">
+                            {topic}
+                          </Badge>
                         ))}
                       </div>
                     </div>
@@ -384,49 +470,85 @@ export const ConversationCard: React.FC<ConversationCardProps> = ({
 
         {/* Action Buttons */}
         <div style={actionButtonsStyles}>
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={analyzeButtonProps.icon}
-            onClick={() => onAnalyze?.(conversation)}
-            disabled={isAnalyzing}
-            loading={isAnalyzing}
-          >
-            {analyzeButtonProps.children}
-          </Button>
+          {/* Add to Project button - only show if not already in a project */}
+          {showProjectButton && !conversation.project_id && onAddToProject && (
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={showButtonIcons ? <FolderPlus /> : undefined}
+              onClick={() => onAddToProject(conversation)}
+              title="Add to project"
+            >
+              {viewMode === 'list' ? '' : 'Project'}
+            </Button>
+          )}
 
+          {/* Analyze button */}
+          {onAnalyze && (
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={analyzeButtonProps.icon}
+              onClick={() => onAnalyze(conversation)}
+              disabled={isAnalyzing || isPending}
+              loading={isAnalyzing}
+            >
+              {analyzeButtonProps.children}
+            </Button>
+          )}
+
+          {/* Deep Dive and Action Plan - only show when analysis exists */}
           {analysis && (
             <>
-              <Button
-                variant="secondary"
-                size="sm"
-                icon={showButtonIcons ? <MessageCircle /> : undefined}
-                onClick={() => onDeepDive?.(conversation)}
-                disabled={isPending}
-              >
-                Deep Dive
-              </Button>
+              {onDeepDive && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={showButtonIcons ? <MessageCircle /> : undefined}
+                  onClick={() => onDeepDive(conversation)}
+                  disabled={isPending}
+                >
+                  Deep Dive
+                </Button>
+              )}
 
-              <Button
-                variant="secondary"
-                size="sm"
-                icon={showButtonIcons ? <ClipboardList /> : undefined}
-                onClick={() => onActionPlan?.(conversation)}
-                disabled={isPending}
-              >
-                Action Plan
-              </Button>
+              {onActionPlan && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={showButtonIcons ? <ClipboardList /> : undefined}
+                  onClick={() => onActionPlan(conversation)}
+                  disabled={isPending}
+                >
+                  Action Plan
+                </Button>
+              )}
             </>
           )}
 
-          <Button
-            variant="primary"
-            size="sm"
-            icon={showButtonIcons ? <Play /> : undefined}
-            onClick={() => onContinue?.(conversation)}
-          >
-            Continue
-          </Button>
+          {/* Continue button */}
+          {onContinue && (
+            <Button
+              variant="primary"
+              size="sm"
+              icon={showButtonIcons ? <Play /> : undefined}
+              onClick={() => onContinue(conversation)}
+            >
+              Continue
+            </Button>
+          )}
+
+          {/* View Details button */}
+          {showViewDetails && onViewDetails && (
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={showButtonIcons ? <Eye /> : undefined}
+              onClick={() => onViewDetails(conversation.id)}
+            >
+              {viewMode === 'list' ? 'View Details' : 'Details'}
+            </Button>
+          )}
         </div>
       </div>
     </div>
