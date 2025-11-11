@@ -18,6 +18,14 @@ const meta: Meta<typeof AppLayout> = {
     defaultSidebarCollapsed: {
       control: 'boolean',
       description: 'Whether the sidebar starts collapsed'
+    },
+    onSignOut: {
+      action: 'sign-out',
+      description: 'Callback when user signs out from the user menu'
+    },
+    onSettingsClick: {
+      action: 'settings-clicked',
+      description: 'Callback when user clicks Settings in the menu'
     }
   }
 }
@@ -25,7 +33,7 @@ const meta: Meta<typeof AppLayout> = {
 export default meta
 type Story = StoryObj<typeof AppLayout>
 
-// Sample navigation items matching your app structure
+// Sample navigation items matching your app structure (NO Settings - it's in user menu now)
 const navItems = [
   {
     id: 'dashboard',
@@ -52,12 +60,6 @@ const navItems = [
     label: 'Import',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>`,
     onClick: () => console.log('Navigate to Import')
-  },
-  {
-    id: 'settings',
-    label: 'Settings',
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`,
-    onClick: () => console.log('Navigate to Settings')
   }
 ]
 
@@ -280,6 +282,8 @@ export const Dashboard: Story = {
     navItems,
     user: sampleUser,
     defaultSidebarCollapsed: false,
+    onSignOut: () => console.log('Sign out'),
+    onSettingsClick: () => console.log('Navigate to Settings'),
     children: <DashboardContent />
   }
 }
@@ -290,6 +294,8 @@ export const CollapsedSidebar: Story = {
     navItems,
     user: sampleUser,
     defaultSidebarCollapsed: true,
+    onSignOut: () => console.log('Sign out'),
+    onSettingsClick: () => console.log('Navigate to Settings'),
     children: <DashboardContent />
   }
 }
@@ -303,6 +309,8 @@ export const ProjectsPage: Story = {
     })),
     user: sampleUser,
     defaultSidebarCollapsed: false,
+    onSignOut: () => console.log('Sign out'),
+    onSettingsClick: () => console.log('Navigate to Settings'),
     children: (
       <div style={{ padding: 'var(--spacing-8) var(--spacing-6)' }}>
         <div 
@@ -367,6 +375,8 @@ export const ThreadsPage: Story = {
     })),
     user: sampleUser,
     defaultSidebarCollapsed: false,
+    onSignOut: () => console.log('Sign out'),
+    onSettingsClick: () => console.log('Navigate to Settings'),
     children: (
       <div style={{ padding: 'var(--spacing-8) var(--spacing-6)' }}>
         <div 
@@ -449,6 +459,8 @@ export const FullWidthDemo: Story = {
     navItems,
     user: sampleUser,
     defaultSidebarCollapsed: false,
+    onSignOut: () => console.log('Sign out'),
+    onSettingsClick: () => console.log('Navigate to Settings'),
     children: (
       <div>
         {/* Full width banner */}

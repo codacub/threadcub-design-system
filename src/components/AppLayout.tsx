@@ -30,6 +30,10 @@ export interface AppLayoutProps {
   onSidebarCollapseChange?: (collapsed: boolean) => void
   /** Callback when user section is clicked */
   onUserClick?: () => void
+  /** Callback when user signs out */
+  onSignOut?: () => void
+  /** Callback when user clicks settings */
+  onSettingsClick?: () => void
   /** Custom className */
   className?: string
 }
@@ -42,6 +46,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   defaultSidebarCollapsed = false,
   onSidebarCollapseChange,
   onUserClick,
+  onSignOut,
+  onSettingsClick,
   className = ''
 }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(defaultSidebarCollapsed)
@@ -81,6 +87,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           defaultCollapsed={sidebarCollapsed}
           onCollapseChange={handleSidebarToggle}
           onUserClick={onUserClick}
+          onSignOut={onSignOut}
+          onSettingsClick={onSettingsClick}
         />
       </div>
 

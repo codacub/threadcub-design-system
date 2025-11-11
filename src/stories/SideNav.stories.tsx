@@ -93,6 +93,18 @@ const meta: Meta<typeof SideNav> = {
     onCollapseChange: {
       action: 'collapse-changed',
       description: 'Callback when collapse state changes'
+    },
+    onUserClick: {
+      action: 'user-clicked',
+      description: 'Callback when user section is clicked (legacy)'
+    },
+    onSignOut: {
+      action: 'sign-out',
+      description: 'Callback when user signs out from menu'
+    },
+    onSettingsClick: {
+      action: 'settings-clicked',
+      description: 'Callback when user clicks Settings in menu'
     }
   },
   tags: ['autodocs']
@@ -377,5 +389,24 @@ export const ThreadCubRealistic: Story = {
     ],
     user: sampleUser,
     defaultCollapsed: false
+  }
+}
+
+// Default menu (no userMenuItems provided - uses built-in Settings + Sign Out)
+export const DefaultMenu: Story = {
+  args: {
+    items: sampleNavItems,
+    // No userMenuItems prop - will use default Settings + Sign Out
+    user: sampleUser,
+    defaultCollapsed: false,
+    onSignOut: () => console.log('Sign out'),
+    onSettingsClick: () => console.log('Navigate to Settings')
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'When userMenuItems is not provided, SideNav automatically creates a default menu with Settings and Sign Out options. Just provide the onSignOut and onSettingsClick callbacks.'
+      }
+    }
   }
 }
