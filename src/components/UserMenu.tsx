@@ -41,14 +41,12 @@ export const UserMenu: React.FC<UserMenuProps> = ({
       className={className}
       style={{
         position: 'absolute',
-        bottom: '72px', // Just above the user section (64px height + 8px gap)
-        left: '8px',
-        right: '8px',
-        backgroundColor: 'var(--color-white)',
-        border: `var(--border-width-thin) solid var(--color-gray-200)`,
-        borderRadius: 'var(--border-radius-lg)',
-        boxShadow: 'var(--shadow-menu)',
-        padding: 'var(--spacing-2)',
+        bottom: '80px', // Just above the user section
+        left: '0',
+        right: '0',
+        backgroundColor: 'transparent',
+        padding: '0 var(--spacing-2)',
+        paddingBottom: 'var(--spacing-2)',
         zIndex: 1000,
         maxHeight: 'calc(100vh - 160px)',
         overflowY: 'auto',
@@ -60,16 +58,16 @@ export const UserMenu: React.FC<UserMenuProps> = ({
       {userEmail && (
         <div
           style={{
-            padding: 'var(--spacing-3) var(--spacing-3)',
-            borderBottom: `var(--border-width-thin) solid var(--color-gray-200)`,
-            marginBottom: 'var(--spacing-2)'
+            padding: 'var(--spacing-2) var(--spacing-3)',
+            marginBottom: 'var(--spacing-1)',
+            borderBottom: `var(--border-width-thin) solid var(--color-gray-200)`
           }}
         >
           <div
             style={{
-              fontSize: 'var(--font-size-sm)',
-              color: 'var(--color-gray-600)',
-              fontWeight: 'var(--font-weight-medium)',
+              fontSize: 'var(--font-size-xs)',
+              color: 'var(--color-gray-500)',
+              fontWeight: 'var(--font-weight-normal)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap'
@@ -101,7 +99,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({
               textAlign: 'left',
               transition: 'background-color var(--transition-base)',
               fontFamily: 'inherit',
-              outline: 'none'
+              outline: 'none',
+              marginBottom: 'var(--spacing-1)'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = item.destructive 
@@ -157,19 +156,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({
                 <path d="m9 18 6-6-6-6" />
               </svg>
             )}
-
-            {/* Keyboard shortcut display area - can be added later */}
-            {item.id === 'settings' && (
-              <span
-                style={{
-                  fontSize: 'var(--font-size-xs)',
-                  color: 'var(--color-gray-400)',
-                  fontFamily: 'monospace'
-                }}
-              >
-                ⌘,
-              </span>
-            )}
           </button>
 
           {/* Divider */}
@@ -178,7 +164,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({
               style={{
                 height: '1px',
                 backgroundColor: 'var(--color-gray-200)',
-                margin: 'var(--spacing-2) 0'
+                margin: 'var(--spacing-1) 0'
               }}
             />
           )}
