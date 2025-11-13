@@ -64,8 +64,9 @@ export { SideNavHeader } from './components/SideNavHeader'
 export type { SideNavHeaderProps } from './components/SideNavHeader'
 
 export { SideNavItem as SideNavItemComponent } from './components/SideNavItem'
-// Note: Only export type if the interface exists in the component file
-// export type { SideNavItemComponentProps } from './components/SideNavItem'
 
 export { UserSection } from './components/UserSection'
 export type { UserSectionProps, UserInfo } from './components/UserSection'
+
+export { UserMenu } from './components/UserMenu'
+export type { UserMenuProps } from './components/UserMenu'
