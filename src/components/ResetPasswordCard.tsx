@@ -36,6 +36,29 @@ export interface ResetPasswordCardProps {
   style?: React.CSSProperties
 }
 
+// Moved outside component to fix TypeScript index signature errors
+const paddingVariants: Record<'sm' | 'md' | 'lg', string> = {
+  sm: 'var(--spacing-6)', // 24px
+  md: 'var(--spacing-8)', // 32px
+  lg: 'var(--spacing-10)' // 40px
+}
+
+const shadowVariants: Record<'sm' | 'md' | 'lg', string> = {
+  sm: 'var(--shadow-card)', // Light shadow
+  md: 'var(--shadow-card-hover)', // Medium shadow
+  lg: '0 8px 32px rgba(0, 0, 0, 0.12)' // Heavy shadow
+}
+
+// Moved outside component so it can be called fresh inside handleSubmit
+const validateEmail = (email: string) => {
+  if (!email.trim()) return { isValid: false, message: 'Email is required' }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email.trim())) {
+    return { isValid: false, message: 'Please enter a valid email address' }
+  }
+  return { isValid: true, message: '' }
+}
+
 export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
   onSubmit,
   onBackToSignIn,
@@ -52,33 +75,9 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
   const [email, setEmail] = useState('')
   const [touched, setTouched] = useState(false)
 
-  // Email validation using more robust regex
-  const validateEmail = (email: string) => {
-    if (!email.trim()) return { isValid: false, message: 'Email is required' }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email.trim())) {
-      return { isValid: false, message: 'Please enter a valid email address' }
-    }
-    return { isValid: true, message: '' }
-  }
-
   const emailValidation = validateEmail(email)
   const showEmailError = touched && !emailValidation.isValid
   const isFormValid = emailValidation.isValid && email.trim().length > 0
-
-  // Padding variants using design tokens
-  const paddingVariants = {
-    sm: 'var(--spacing-6)', // 24px
-    md: 'var(--spacing-8)', // 32px
-    lg: 'var(--spacing-10)' // 40px
-  }
-
-  // Shadow variants using design tokens
-  const shadowVariants = {
-    sm: 'var(--shadow-card)', // Light shadow
-    md: 'var(--shadow-card-hover)', // Medium shadow
-    lg: '0 8px 32px rgba(0, 0, 0, 0.12)' // Heavy shadow
-  }
 
   // Card styles using design tokens
   const cardStyles: React.CSSProperties = {
@@ -99,20 +98,17 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     ...style
   }
 
-  // Header styles using design tokens
   const headerStyles: React.CSSProperties = {
     textAlign: 'center',
     marginBottom: 'var(--spacing-2)'
   }
 
-  // Logo container styles using design tokens
   const logoContainerStyles: React.CSSProperties = {
     margin: '0 auto var(--spacing-4)',
     display: 'flex',
     justifyContent: 'center'
   }
 
-  // Description styles using design tokens
   const descriptionStyles: React.CSSProperties = {
     fontSize: 'var(--font-size-base)',
     fontFamily: 'var(--font-family-primary)',
@@ -121,14 +117,12 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     margin: '0 0 var(--spacing-2) 0'
   }
 
-  // Form styles using design tokens
   const formStyles: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-5)'
   }
 
-  // Back to sign in section styles using design tokens
   const backSectionStyles: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
@@ -136,7 +130,6 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     marginTop: 'var(--spacing-2)'
   }
 
-  // Back button styles using design tokens
   const backButtonStyles: React.CSSProperties = {
     background: 'none',
     border: 'none',
@@ -152,12 +145,13 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     outline: 'none'
   }
 
-  // Handle form submission
+  // Handle form submission — validates fresh to avoid stale closure bug
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setTouched(true)
 
-    if (!isFormValid || loading) {
+    const validation = validateEmail(email)
+    if (!validation.isValid || loading) {
       return
     }
 
@@ -170,23 +164,19 @@ export const ResetPasswordCard: React.FC<ResetPasswordCardProps> = ({
     }
   }
 
-  // Handle email input change
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
-    // Clear touched state when user starts typing again
     if (touched && emailValidation.isValid) {
       setTouched(false)
     }
   }
 
-  // Handle back to sign in
   const handleBackToSignIn = () => {
     if (onBackToSignIn) {
       onBackToSignIn()
     }
   }
 
-  // Handle back button hover
   const handleBackButtonMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.currentTarget.style.textDecoration = 'underline'
     e.currentTarget.style.color = 'var(--color-primary-hover)'
